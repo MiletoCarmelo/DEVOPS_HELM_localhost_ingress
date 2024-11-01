@@ -1,0 +1,11 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: quant-cm-cert
+spec:
+  secretName: {{ .Values.tls.secretName }}
+  dnsNames:
+  - {{ .Values.domain }}
+  issuerRef:
+    name: selfsigned-issuer
+    kind: ClusterIssuer

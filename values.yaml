@@ -1,0 +1,12 @@
+domain: www.quant-cm.com
+service:
+  port: 80
+  targetPort: 8080  # Ajustez selon votre application
+
+ingress:
+  className: nginx
+  annotations:
+    cert-manager.io/cluster-issuer: selfsigned-issuer
+
+tls:
+  secretName: quant-cm-tls
