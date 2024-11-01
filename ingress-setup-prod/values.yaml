@@ -1,7 +1,7 @@
 domain: www.quant-cm.com
 service:
   port: 80
-  targetPort: 8080  # Ajustez selon votre application
+  targetPort: 8080
 
 ingress:
   className: nginx
