@@ -11,3 +11,4 @@ ingress:
 
 tls:
   secretName: quant-cm-tls
+  certificateName: quant-cm-cert  # Ajoutez cette ligne
