@@ -2,9 +2,6 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ .Values.tls.certificateName }}
-  namespace: default
-  labels:
-    app.kubernetes.io/managed-by: Helm
 spec:
   secretName: {{ .Values.tls.secretName }}
   duration: 2160h
