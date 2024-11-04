@@ -1,4 +1,5 @@
-domain: www.quant-cm.com
+domain: dev.quant-cm.com
+
 service:
   port: 80
   targetPort: 8080
