@@ -4,22 +4,21 @@ metadata:
   name: quant-cm-ingress
   annotations:
     kubernetes.io/ingress.class: {{ .Values.ingress.className }}
-    {{- range $key, $value := .Values.ingress.annotations }}
-    {{ $key }}: {{ $value }}
-    {{- end }}
+    cert-manager.io/cluster-issuer: selfsigned-issuer
 spec:
   tls:
-  - hosts:
-    - {{ .Values.domain }}
-    secretName: {{ .Values.tls.secretName }}
+    - hosts:
+        - {{ .Values.domain }}
+      secretName: {{ .Values.tls.secretName }}
   rules:
-  - host: {{ .Values.domain }}
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: quant-cm-service
-            port:
-              number: {{ .Values.service.port }}
+    - host: {{ .Values.domain }}
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: quant-cm-service
+                port:
+                  number: {{ .Values.service.port }}
+              

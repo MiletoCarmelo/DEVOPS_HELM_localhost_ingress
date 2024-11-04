@@ -1,14 +1,12 @@
 domain: quant-cm.com
-
 service:
   port: 80
   targetPort: 8070
-
 ingress:
   className: nginx
   annotations:
     cert-manager.io/cluster-issuer: selfsigned-issuer
-
 tls:
+  enabled: true
   secretName: quant-cm-tls
-  certificateName: quant-cm-cert  # Ajoutez cette ligne
+  certificateName: quant-cm-cert
