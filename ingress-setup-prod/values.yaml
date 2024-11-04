@@ -1,4 +1,5 @@
 domain: dev-quant-cm.com
+path: /tsa
 service:
   port: 80
   targetPort: 8070
