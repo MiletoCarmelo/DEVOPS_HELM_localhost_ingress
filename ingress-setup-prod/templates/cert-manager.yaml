@@ -2,8 +2,11 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: quant-cm-cert
+  namespace: default
 spec:
   secretName: {{ .Values.tls.secretName }}
+  duration: 2160h # 90 jours
+  renewBefore: 720h # 30 jours
   dnsNames:
   - {{ .Values.domain }}
   issuerRef:
