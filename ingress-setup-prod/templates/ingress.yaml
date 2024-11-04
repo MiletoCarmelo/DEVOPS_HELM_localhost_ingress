@@ -2,6 +2,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: quant-cm-ingress
+  labels:
+    app.kubernetes.io/managed-by: Helm
   annotations:
     kubernetes.io/ingress.class: {{ .Values.ingress.className }}
     cert-manager.io/cluster-issuer: selfsigned-issuer
@@ -21,4 +23,3 @@ spec:
                 name: quant-cm-service
                 port:
                   number: {{ .Values.service.port }}
-              
