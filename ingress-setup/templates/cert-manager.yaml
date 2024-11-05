@@ -1,3 +1,13 @@
+# templates/cert-manager.yaml
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: selfsigned-issuer
+spec:
+  selfSigned: {}
+
+---
+# Si vous avez aussi besoin du ClusterIssuer pour prod
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
@@ -5,11 +15,10 @@ metadata:
 spec:
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: {{ index .Values.infos.email}}
+    email: {{ index .Values.infos.email }}
     privateKeySecretRef:
       name: letsencrypt-prod
     solvers:
-    - http01:
-        ingress:
-          class: nginx
-EOF
+      - http01:
+          ingress:
+            class: nginx
