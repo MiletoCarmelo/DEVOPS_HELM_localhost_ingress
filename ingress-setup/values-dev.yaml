@@ -1,0 +1,21 @@
+# values-dev.yaml
+domain: dev.quant-cm.com  # ou local.quant-cm.com
+
+infos:
+  email: quant-cm@gmail.com
+
+service:
+  port: 80
+  targetPort: 8070
+
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: "selfsigned-issuer"  # Certificat auto-signé
+  hosts:
+    paths:
+      - path: /
+        pathType: Prefix
+  tls:
+    - secretName: quant-cm-tls-dev
+      certificateName: quant-cm-cert-dev

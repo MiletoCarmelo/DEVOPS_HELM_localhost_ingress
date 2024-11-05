@@ -12,7 +12,8 @@ helm install cert-manager jetstack/cert-manager \
     --namespace cert-manager \
     --create-namespace \
     --set installCRDs=true \
-    --version v1.16.1  # Replace with latest stable version
+    --version v1.16.1 
+# Replace with latest stable version
 
 # verification if installed : 
 kubectl get crd | grep certificates.cert-manager.io
