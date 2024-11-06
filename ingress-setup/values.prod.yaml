@@ -1,4 +1,5 @@
 # values-prod.yaml
+environment: prod
 domain: quant-cm.com
 infos:
   email: quant-cm@gmail.com
@@ -10,9 +11,9 @@ ingress:
   annotations:
     cert-manager.io/cluster-issuer: "letsencrypt-prod"
   hosts:
-      paths:
-        - path: /
-          pathType: Prefix
+    paths:
+      - path: /
+        pathType: Prefix
   tls:
     - secretName: quant-cm-tls-prod
     - certificateName: quant-cm-cert-prod

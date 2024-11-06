@@ -1,13 +1,11 @@
 # values-dev.yaml
+environment: dev
 domain: dev.quant-cm.com  # ou local.quant-cm.com
-
 infos:
   email: quant-cm@gmail.com
-
 service:
   port: 80
   targetPort: 8070
-
 ingress:
   enabled: true
   annotations:

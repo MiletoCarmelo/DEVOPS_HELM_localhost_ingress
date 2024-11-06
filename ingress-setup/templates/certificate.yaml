@@ -6,7 +6,11 @@ metadata:
 spec:
   secretName: {{ index .Values.ingress.tls 0 "secretName" }}
   issuerRef:
+    {{- if eq .Values.environment "dev" }}
+    name: selfsigned-issuer
+    {{- else }}
     name: letsencrypt-prod
+    {{- end }}
     kind: ClusterIssuer
   dnsNames:
     - {{ .Values.domain }}
