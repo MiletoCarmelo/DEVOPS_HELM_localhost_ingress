@@ -4,12 +4,12 @@ kind: Certificate
 metadata:
   name: {{ index .Values.ingress.tls 0 "certificateName" }}
 spec:
-  secretName: {{ index .Values.ingress.cert 0 "secretName" }}
+  secretName: {{ index .Values.ingress.cert 0 "secretName" }}  # Utilise le secret du cert
   issuerRef:
     {{- if eq .Values.environment "dev" }}
-    name: selfsigned-issuer
+    name: selfsigned-issuer-{{ .Values.environment }}
     {{- else }}
-    name: letsencrypt-prod
+    name: letsencrypt-{{ .Values.environment }}
     {{- end }}
     kind: ClusterIssuer
   dnsNames:
