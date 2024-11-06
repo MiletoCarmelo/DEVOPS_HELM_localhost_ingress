@@ -15,5 +15,5 @@ ingress:
       - path: /
         pathType: Prefix
   tls:
-    - secretName: quant-cm-tls-dev    # Un seul secret pour tout
-      certificateName: quant-cm-tls-dev  # Un seul certificate pour tout
+    - secretName: quant-cm-cert-dev    # Un seul secret pour tout
+      certificateName: quant-cm-cert-dev  # Un seul certificate pour tout
