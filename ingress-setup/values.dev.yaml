@@ -5,7 +5,7 @@ infos:
   email: quant-cm@gmail.com
 service:
   port: 80
-  targetPort: 8070  # Changé pour correspondre au port de l'application
+  targetPort: 80  # Changé pour correspondre au port de l'application
   nodePort: 30007  # Choisissez un port dans la plage 30000-32767
   selector:
     app: success-app
