@@ -12,5 +12,4 @@ spec:
       # protocol: TCP
       nodePort: {{ .Values.service.nodePort }}
   selector:
-    app: {{ .Values.service.selector.app}}
-    app.kubernetes.io/instance: {{ .Values.service.selector.app}}-{{ .Values.environment }}
+    app: {{ .Values.service.selector.app }}

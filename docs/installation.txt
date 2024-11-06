@@ -20,3 +20,22 @@ kubectl get crd | grep certificates.cert-manager.io
 
 # If you want to check the specific Certificate resource that's failing:
 kubectl get certificate quant-cm-cert -n default
+
+########################################################################################
+
+# Arrêter minikube
+minikube stop
+
+# Supprimer le cluster actuel
+minikube delete
+
+# Installer hyperkit si ce n'est pas déjà fait
+brew install hyperkit
+
+# Démarrer avec une configuration réseau spécifique
+minikube start --driver=hyperkit  # pour MacOS
+# ou
+minikube start --driver=docker    # si vous utilisez Docker (l'adresse ip du service ne marchera pas, mais uniquement le 127.0.0.1)
+
+# Activer l'addon ingress si ce n'est pas déjà fait
+minikube addons enable ingress
