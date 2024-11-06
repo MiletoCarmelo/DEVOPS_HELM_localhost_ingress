@@ -13,6 +13,7 @@ ingress:
   enabled: true
   annotations:
     cert-manager.io/cluster-issuer: "selfsigned"
+  whitelistSourceRange: "192.168.1.0/24"  # Remplacez par la plage IP de votre réseau local
   hosts:
     paths:
       - path: /
