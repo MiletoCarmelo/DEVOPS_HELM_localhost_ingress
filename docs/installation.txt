@@ -43,4 +43,4 @@ minikube addons enable ingress
 
 # pour acceder a la pseudo app : 
 http://192.168.65.2:30007 => sa marche 
-http://quant-cm.192.168.65.2.nip.io => mais pas ca 
+http://quant-cm.192.168.58.2.nip.io => mais pas ca 
