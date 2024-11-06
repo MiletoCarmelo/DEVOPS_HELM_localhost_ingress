@@ -9,11 +9,11 @@ service:
 ingress:
   enabled: true
   annotations:
-    cert-manager.io/cluster-issuer: "selfsigned"  # Doit correspondre au nom dans cert-manager.yaml
+    cert-manager.io/cluster-issuer: "selfsigned"
   hosts:
     paths:
       - path: /
         pathType: Prefix
   tls:
-    - secretName: quant-cm-tls-dev
-      certificateName: quant-cm-cert-dev
+    - secretName: quant-cm-tls-dev    # Un seul secret pour tout
+      certificateName: quant-cm-tls-dev  # Un seul certificate pour tout
