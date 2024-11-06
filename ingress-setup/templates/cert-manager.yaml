@@ -2,23 +2,18 @@
 apiVersion: cert-manager.io/v1
 kind: ClusterIssuer
 metadata:
-  name: selfsigned-issuer
+  name: {{ index .Values.ingress.annotations "cert-manager.io/cluster-issuer" }}-{{ .Values.environment }}
 spec:
+  {{- if eq .Values.environment "dev" }}
   selfSigned: {}
-
----
-# Si vous avez aussi besoin du ClusterIssuer pour prod
-apiVersion: cert-manager.io/v1
-kind: ClusterIssuer
-metadata:
-  name: letsencrypt-prod
-spec:
+  {{- else }}
   acme:
     server: https://acme-v02.api.letsencrypt.org/directory
-    email: {{ index .Values.infos.email }}
+    email: {{ .Values.infos.email }}
     privateKeySecretRef:
-      name: letsencrypt-prod
+      name: letsencrypt-{{ .Values.environment }}
     solvers:
       - http01:
           ingress:
             class: nginx
+  {{- end }}
