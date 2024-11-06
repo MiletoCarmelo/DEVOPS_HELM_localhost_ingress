@@ -9,7 +9,6 @@ spec:
   issuerRef:
     name: {{ index .Values.ingress.annotations "cert-manager.io/cluster-issuer" }}-{{ .Values.environment }}
     kind: ClusterIssuer
-    group: cert-manager.io
   dnsNames:
     - {{ .Values.domain }}
   commonName: {{ .Values.domain }}
@@ -20,5 +19,3 @@ spec:
     size: 2048
   usages:
     - server auth
-    - digital signature
-    - key encipherment
