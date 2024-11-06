@@ -6,6 +6,7 @@ infos:
 service:
   port: 80
   targetPort: 8070
+  nodePort: 30007  # Choisissez un port dans la plage 30000-32767
 ingress:
   enabled: true
   annotations:
