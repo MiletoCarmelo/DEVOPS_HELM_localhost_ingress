@@ -1,6 +1,6 @@
 # values-dev.yaml
 environment: dev
-domain: quant-cm.192.168.58.2.nip.io  # Change le domaine pour utiliser nip.io
+domain: quant-cm.192.168.58.2.nip.io
 infos:
   email: quant-cm@gmail.com
 service:
@@ -9,13 +9,11 @@ service:
 ingress:
   enabled: true
   annotations:
-    cert-manager.io/cluster-issuer: "selfsigned"
+    cert-manager.io/cluster-issuer: "selfsigned"  # Doit correspondre au nom dans cert-manager.yaml
   hosts:
     paths:
       - path: /
         pathType: Prefix
-  cert:
-    - secretName: quant-cm-cert-secret-dev
   tls:
     - secretName: quant-cm-tls-dev
       certificateName: quant-cm-cert-dev
