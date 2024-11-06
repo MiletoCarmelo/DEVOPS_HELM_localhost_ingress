@@ -3,7 +3,7 @@ apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
   name: {{ index .Values.ingress.tls 0 "certificateName" }}
-  namespace: {{ .Vales.environment }}
+  namespace: {{ .Values.environment }}
 spec:
   secretName: {{ index .Values.ingress.tls 0 "secretName" }}
   issuerRef:
