@@ -17,14 +17,14 @@ services:
   - name: success-app
     subdomain: success
     service:
-      name: success-app-service
+      name: success-app-dev-service  # Modifier pour correspondre au nom réel
       port: 80
       path: /
       pathType: Prefix
   - name: trading-strategy
     subdomain: trading
     service:
-      name: dev-tsa-service
+      name: tsa-dev-service  # Modifier pour correspondre au nom réel
       port: 80
       path: /
       pathType: Prefix
