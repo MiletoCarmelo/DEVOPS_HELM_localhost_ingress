@@ -12,13 +12,13 @@ metadata:
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   tls:
-    - secretName: {{ include "ingress-setup.tlsSecretName" . }} # Utilise le même helper
+    - secretName: {{ include "ingress-setup.tlsSecretName" . }}
       hosts:
-      {{- range .Values.services }}
+        {{- range .Values.services }}
         - {{ .subdomain }}.{{ $.Values.baseDomain }}
-      {{- end }}
+        {{- end }}
   rules:
-  {{- range .Values.services }}
+    {{- range .Values.services }}
     - host: {{ .subdomain }}.{{ $.Values.baseDomain }}
       http:
         paths:
@@ -29,4 +29,4 @@ spec:
                 name: {{ .service.name }}
                 port:
                   number: {{ .service.port }}
-  {{- end }}
+    {{- end }}

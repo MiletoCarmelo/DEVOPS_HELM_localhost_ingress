@@ -1,0 +1,10 @@
+## Accès aux applications
+
+Les applications sont accessibles via HTTPS sur le port 31098 :
+
+- Success App : https://success.mm.ch:31098
+- Trading App : https://trading.mm.ch:31098
+
+Note: En local, assurez-vous que les entrées DNS sont configurées dans votre /etc/hosts :
+```bash
+echo "$(minikube ip) success.mm.ch trading.mm.ch" | sudo tee -a /etc/hosts

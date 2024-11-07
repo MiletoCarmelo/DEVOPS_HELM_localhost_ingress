@@ -7,6 +7,9 @@ tls:
 
 ingress:
   className: nginx
+  ports:
+    http: 30753
+    https: 31098
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"  # Pour le test initial
     nginx.ingress.kubernetes.io/force-ssl-redirect: "true"
