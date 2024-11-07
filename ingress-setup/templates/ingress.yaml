@@ -1,7 +1,7 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: {{ .Values.module }}-ingress
+  name: {{ .Values.module }}-{{ .Values.environment }}-ingress
   namespace: {{ .Values.environment }}
   annotations:
     {{- toYaml .Values.ingress.annotations | nindent 4 }}

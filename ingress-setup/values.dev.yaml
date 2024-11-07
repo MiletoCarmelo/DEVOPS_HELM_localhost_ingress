@@ -1,9 +1,9 @@
+module: ingress-setup
 environment: dev
 baseDomain: mm.ch
 
 # Configuration TLS unique
 tls:
-  secretName: central-ingress-tls-dev
   issuer: selfsigned
 
 # Configuration globale
