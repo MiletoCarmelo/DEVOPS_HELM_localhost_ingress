@@ -1,35 +1,31 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: quant-cm-ingress
+  labels:
+    {{- include "ingress-setup.labels" . | nindent 4 }}
+  name: central-ingress
   namespace: {{ .Values.environment }}
   annotations:
-    kubernetes.io/ingress.class: {{ .Values.ingress.annotations.ingressClass }}
-    cert-manager.io/cluster-issuer: {{ .Values.ingress.annotations.clusterIssuer }}-{{ .Values.environment }}
-    {{ if .Values.ingress.annotations.nginx.sslRedirect }}
-    nginx.ingress.kubernetes.io/ssl-redirect: "{{ .Values.ingress.annotations.nginx.sslRedirect }}"
-    {{ end}}
-    {{ if .Values.ingress.annotations.nginx.whiteListSourceRange }}
-    nginx.ingress.kubernetes.io/whitelist-source-range: {{ .Values.ingress.annotations.nginx.whiteListSourceRange  }}
-    {{ end }}
-    {{ if .Values.ingress.annotations.nginx.backendProtocol }}
-    nginx.ingress.kubernetes.io/backend-protocol: {{ .Values.ingress.annotations.nginx.backendProtocol }}
-    {{ end }}
+    {{- range $key, $value := .Values.ingress.annotations }}
+    {{ $key }}: {{ $value | quote }}
+    {{- end }}
 spec:
   tls:
-    - hosts:
-        - {{ .Values.domain }}
-      secretName: {{ index .Values.ingress.tls 0 "secretName" }}
+    - secretName: {{ .Values.tls.secretName }}
+      hosts:
+        {{- range .Values.services }}
+        - {{ .subdomain }}.{{ $.Values.baseDomain }}
+        {{- end }}
   rules:
-    - host: {{ .Values.domain }}
+    {{- range .Values.services }}
+    - host: {{ include "ingress-setup.hostname" (dict "subdomain" .subdomain "baseDomain" $.Values.baseDomain) }}
       http:
         paths:
-          {{- range .Values.ingress.hosts.paths }}
           - path: {{ .path }}
             pathType: {{ .pathType }}
             backend:
               service:
-                name: quant-cm-service
+                name: {{ .service.name }}
                 port:
-                  number: {{ $.Values.service.port }}
-          {{- end }}
+                  number: {{ .service.port }}
+    {{- end }}

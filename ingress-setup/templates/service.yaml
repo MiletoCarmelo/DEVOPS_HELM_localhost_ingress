@@ -1,18 +1,20 @@
-# templates/service.yaml
+{{- range .Values.services }}
+{{- if .service.nodePort }}
+---
 apiVersion: v1
 kind: Service
 metadata:
-  name: quant-cm-service
-  namespace: {{ .Values.environment }}
-  labels:
-    app: {{ .Values.service.selector.app }}
+  name: {{ .service.name }}
+  namespace: {{ $.Values.environment }}
 spec:
-  # type: ClusterIP
   type: NodePort
   ports:
-    - port: {{ .Values.service.port }}
-      targetPort: {{ .Values.service.targetPort }}
-      protocol: TCP
-      nodePort: {{ .Values.service.nodePort }}
+    - port: {{ .service.port }}
+      targetPort: {{ .service.targetPort }}
+      {{- if .service.nodePort }}
+      nodePort: {{ .service.nodePort }}
+      {{- end }}
   selector:
-    app: {{ .Values.service.selector.app }}
+    {{- toYaml .service.selector | nindent 4 }}
+{{- end }}
+{{- end }}

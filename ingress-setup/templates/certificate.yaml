@@ -1,17 +1,20 @@
-# templates/certificate.yaml
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  name: {{ index .Values.ingress.tls 0 "certificateName" }}
+  labels:
+    {{- include "ingress-setup.labels" . | nindent 4 }}
+  name: {{ include "ingress-setup.tlsSecretName" . }}
   namespace: {{ .Values.environment }}
 spec:
-  secretName: {{ index .Values.ingress.tls 0 "secretName" }}
+  secretName: {{ .Values.tls.secretName }}
   issuerRef:
-    name: {{ index .Values.ingress.annotations.clusterIssuer }}-{{ .Values.environment }}
+    name: {{ .Values.tls.issuer }}-{{ .Values.environment }}
     kind: ClusterIssuer
   dnsNames:
-    - {{ .Values.domain }}
-  commonName: {{ .Values.domain }}
+    {{- range .Values.services }}
+    - {{ .subdomain }}.{{ $.Values.baseDomain }}
+    {{- end }}
+  commonName: "*.{{ .Values.baseDomain }}"  # Wildcard certificate pour tous les sous-domaines
   duration: 2160h
   renewBefore: 360h
   privateKey:
