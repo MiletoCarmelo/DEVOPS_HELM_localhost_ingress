@@ -1,6 +1,6 @@
 environment: dev
 # domain: intranet-quant-cm.ch
-domain: mm.ch
+domain: dev.intranet-mm.com
 infos:
   email: quant-cm@gmail.com
 service:
