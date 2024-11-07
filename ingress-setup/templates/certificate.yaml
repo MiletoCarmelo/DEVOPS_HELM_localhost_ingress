@@ -6,7 +6,7 @@ metadata:
   labels:
     {{- include "ingress-setup.labels" . | nindent 4 }}
 spec:
-  secretName: {{ .Values.module }}-{{ .Values.environment }}-tls-secret  # Changed secret name
+  secretName: {{ include "ingress-setup.tlsSecretName" . }}  # Utiliser le helper
   issuerRef:
     name: {{ .Values.module }}-{{ .Values.environment }}-issuer
     kind: ClusterIssuer
