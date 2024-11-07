@@ -2,27 +2,24 @@ module: ingress-setup
 environment: dev
 baseDomain: mm.ch
 
-# Configuration TLS unique
 tls:
   issuer: selfsigned
+  enabled: true
   secretName: ingress-tls
 
-# Configuration globale
 ingress:
   className: nginx
   annotations:
-    cert-manager.io/cluster-issuer: "selfsigned-dev"
+    cert-manager.io/cluster-issuer: "{{ .Values.module }}-{{ .Values.environment }}-issuer"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 
-# Services
 services:
   - name: success-app
     subdomain: success
     service:
       name: success-app-service
       port: 80
-
   - name: trading-strategy
     subdomain: trading
     service:

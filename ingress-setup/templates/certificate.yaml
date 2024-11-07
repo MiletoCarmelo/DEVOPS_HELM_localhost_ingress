@@ -4,10 +4,11 @@ metadata:
   name: {{ .Values.module }}-{{ .Values.environment }}-certificate
   namespace: {{ .Values.environment }}
 spec:
-  secretName: {{ include "ingress-setup.tlsSecretName" . }}  # Use the helper function
+  secretName: {{ .Values.module }}-{{ .Values.environment }}-secret
   issuerRef:
-    name: {{ .Values.tls.issuer }}-{{ .Values.environment }}
+    name: {{ .Values.module }}-{{ .Values.environment }}-issuer  # Make sure this matches your ClusterIssuer name
     kind: ClusterIssuer
+    group: cert-manager.io
   dnsNames:
   {{- range .Values.services }}
     - {{ .subdomain }}.{{ $.Values.baseDomain }}
@@ -20,3 +21,6 @@ spec:
     size: 2048
   usages:
     - server auth
+  subject:
+    organizations:
+      - {{ .Values.module }}
