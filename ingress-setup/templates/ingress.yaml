@@ -9,8 +9,8 @@ metadata:
     {{ if .Values.ingress.annotations.nginx.sslRedirect }}
     nginx.ingress.kubernetes.io/ssl-redirect: "{{ .Values.ingress.annotations.nginx.sslRedirect }}"
     {{ end}}
-    {{ if .Values.privateVariables.ingress.annotations.nginx.whiteListSourceRange }}
-    nginx.ingress.kubernetes.io/whitelist-source-range: {{ .Values.privateVariables.ingress.annotations.nginx.whiteListSourceRange  }}
+    {{ if .Values.ingress.annotations.nginx.whiteListSourceRange }}
+    nginx.ingress.kubernetes.io/whitelist-source-range: {{ .Values.ingress.annotations.nginx.whiteListSourceRange  }}
     {{ end }}
     {{ if .Values.ingress.annotations.nginx.backendProtocol }}
     nginx.ingress.kubernetes.io/backend-protocol: {{ .Values.ingress.annotations.nginx.backendProtocol }}
