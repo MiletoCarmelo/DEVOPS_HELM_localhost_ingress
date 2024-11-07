@@ -13,7 +13,7 @@ metadata:
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   tls:
-    - secretName: {{ include "ingress-setup.tlsSecretName" . }}
+    - secretName: {{ include "ingress-setup.tlsSecretName" . }} # Utilise le même helper
       hosts:
       {{- range .Values.services }}
         - {{ .subdomain }}.{{ $.Values.baseDomain }}

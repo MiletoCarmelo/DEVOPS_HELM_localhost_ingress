@@ -6,11 +6,10 @@ metadata:
   labels:
     {{- include "ingress-setup.labels" . | nindent 4 }}
 spec:
-  secretName: {{ include "ingress-setup.tlsSecretName" . }}
+  secretName: {{ include "ingress-setup.tlsSecretName" . }} # Utilise le helper
   issuerRef:
     name: {{ .Values.module }}-{{ .Values.environment }}-issuer
     kind: ClusterIssuer
-    group: cert-manager.io
   dnsNames:
   {{- range .Values.services }}
     - {{ .subdomain }}.{{ $.Values.baseDomain }}
@@ -23,4 +22,3 @@ spec:
     size: 2048
   usages:
     - server auth
-  isCA: false
