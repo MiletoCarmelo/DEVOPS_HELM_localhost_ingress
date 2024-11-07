@@ -8,11 +8,11 @@ metadata:
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   tls:
-    - secretName: {{ .Values.module }}-{{ .Values.environment }}-secret
+    - secretName: {{ include "ingress-setup.tlsSecretName" . }}  # Use the helper function
       hosts:
-        {{- range .Values.services }}
+      {{- range .Values.services }}
         - {{ .subdomain }}.{{ $.Values.baseDomain }}
-        {{- end }}
+      {{- end }}
   rules:
     {{- range .Values.services }}
     - host: {{ .subdomain }}.{{ $.Values.baseDomain }}

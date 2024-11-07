@@ -5,6 +5,7 @@ baseDomain: mm.ch
 # Configuration TLS unique
 tls:
   issuer: selfsigned
+  secretName: ingress-tls
 
 # Configuration globale
 ingress:

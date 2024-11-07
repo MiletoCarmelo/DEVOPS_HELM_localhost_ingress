@@ -37,3 +37,10 @@ Determine if TLS is enabled
 {{- define "ingress-setup.tlsEnabled" -}}
 {{- if .Values.tls.enabled }}true{{ else }}false{{ end -}}
 {{- end }}
+
+
+{{- define "ingress-setup.validateSecretName" -}}
+{{- if not .Values.tls.secretName -}}
+{{- fail "tls.secretName must be set in values file" -}}
+{{- end -}}
+{{- end -}}

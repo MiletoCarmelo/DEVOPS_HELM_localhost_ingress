@@ -4,14 +4,14 @@ metadata:
   name: {{ .Values.module }}-{{ .Values.environment }}-certificate
   namespace: {{ .Values.environment }}
 spec:
-  secretName:  {{ .Values.module }}-{{ .Values.environment }}-secret
+  secretName: {{ include "ingress-setup.tlsSecretName" . }}  # Use the helper function
   issuerRef:
     name: {{ .Values.tls.issuer }}-{{ .Values.environment }}
     kind: ClusterIssuer
   dnsNames:
-    {{- range .Values.services }}
+  {{- range .Values.services }}
     - {{ .subdomain }}.{{ $.Values.baseDomain }}
-    {{- end }}
+  {{- end }}
   commonName: "*.{{ .Values.baseDomain }}"
   duration: 2160h
   renewBefore: 360h
