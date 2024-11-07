@@ -16,7 +16,6 @@ ingress:
     nginx: 
       sslRedirect: "false"
       backendProtocol: "HTTP"
-      whiteListSourceRange: {{ .Values.allowedIpRanges | quote }}
   hosts:
     paths:
       - path: /
