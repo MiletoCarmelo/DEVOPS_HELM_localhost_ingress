@@ -12,6 +12,9 @@ metadata:
     {{ if .Values.ingress.annotations.nginx.whitelistSourceRange }}
     nginx.ingress.kubernetes.io/whitelist-source-range: {{ .Values.ingress.annotations.nginx.whiteListSourceRange }}
     {{ end }}
+    {{ if .Values.ingress.annotations.nginx.backendProtocol }}
+    nginx.ingress.kubernetes.io/backend-protocol: {{ .Values.ingress.annotations.nginx.backendProtocol }}
+    {{ end }}
 spec:
   tls:
     - hosts:
