@@ -6,7 +6,6 @@ metadata:
   labels:
     {{- include "ingress-setup.labels" . | nindent 4 }}
   annotations:
-    cert-manager.io/cluster-issuer: {{ .Values.module }}-{{ .Values.environment }}-issuer
     {{- with .Values.ingress.annotations }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
