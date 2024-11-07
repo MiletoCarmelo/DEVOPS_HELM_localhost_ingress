@@ -32,9 +32,10 @@ minikube delete
 # Installer hyperkit si ce n'est pas déjà fait
 brew install hyperkit
 
-# Démarrer avec une configuration réseau spécifique
-minikube start --driver=hyperkit --listen-address=192.168.1.20 --apiserver-ips=192.168.1.20
+# Démarrer avec une configuration réseau spécifique (au lieux de docker)
+minikube start --driver=hyperkit
 # ou l'adresse ip est celle de mon mac
+minikube start --driver=hyperkit --listen-address=192.168.1.20 --apiserver-ips=192.168.1.20
 # ou
 minikube start --driver=docker    # si vous utilisez Docker (l'adresse ip du service ne marchera pas, mais uniquement le 127.0.0.1)
 
