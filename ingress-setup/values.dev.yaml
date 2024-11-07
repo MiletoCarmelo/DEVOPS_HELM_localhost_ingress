@@ -31,3 +31,10 @@ services:
       port: 80
       path: /
       pathType: Prefix
+  - name: optionsviz
+    subdomain: optionviz
+    service:
+      name: optionviz-dev-service  # Modifier pour correspondre au nom réel
+      port: 80
+      path: /
+      pathType: Prefix
