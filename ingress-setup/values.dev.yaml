@@ -1,3 +1,4 @@
+module : central
 environment: dev
 baseDomain: mm.ch
 infos:

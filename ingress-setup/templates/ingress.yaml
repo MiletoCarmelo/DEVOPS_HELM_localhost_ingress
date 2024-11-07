@@ -3,7 +3,7 @@ kind: Ingress
 metadata:
   labels:
     {{- include "ingress-setup.labels" . | nindent 4 }}
-  name: central-ingress
+  name: {{ .Values.module }}-{{ .Values.environment }}-ingress
   namespace: {{ .Values.environment }}
   annotations:
     {{- range $key, $value := .Values.ingress.annotations }}
