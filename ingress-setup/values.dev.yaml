@@ -16,7 +16,7 @@ ingress:
     nginx: 
       sslRedirect: "false"
       backendProtocol: "HTTP"
-      whiteListSourceRange: "127.0.0.1"
+      # whiteListSourceRange: "127.0.0.1"
   hosts:
     paths:
       - path: /
