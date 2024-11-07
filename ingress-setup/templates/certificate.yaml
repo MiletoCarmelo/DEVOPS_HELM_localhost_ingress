@@ -4,7 +4,7 @@ metadata:
   name: {{ .Values.module }}-{{ .Values.environment }}-certificate
   namespace: {{ .Values.environment }}
 spec:
-  secretName:  {{ .Values.tls.module }}-{{ .Values.environment }}-secret
+  secretName:  {{ .Values.module }}-{{ .Values.environment }}-secret
   issuerRef:
     name: {{ .Values.tls.issuer }}-{{ .Values.environment }}
     kind: ClusterIssuer
