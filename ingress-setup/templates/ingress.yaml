@@ -1,14 +1,13 @@
-# templates/ingress.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: quant-cm-ingress
   namespace: {{ .Values.environment }}
   annotations:
-    kubernetes.io/ingress.class: "{{ .Values.ingress.annotations.cluster-issuer}}"
-    cert-manager.io/cluster-issuer: "{{ index .Values.ingress.annotations "cert-manager.io/cluster-issuer" }}-{{ .Values.environment }}" 
-    nginx.ingress.kubernetes.io/ssl-redirect: "{{ .Values.ingress.annotations.nginx.ssl-redirect }}"
-    # nginx.ingress.kubernetes.io/whitelist-source-range: "{{ .Values.ingress.whitelistSourceRange }}"
+    kubernetes.io/ingress.class: "nginx"
+    cert-manager.io/cluster-issuer: "{{ .Values.ingress.annotations.cert-manager.io/cluster-issuer }}-{{ .Values.environment }}"
+    nginx.ingress.kubernetes.io/ssl-redirect: "{{ .Values.ingress.annotations.nginx.ingress.kubernetes.io/ssl-redirect }}"
+    nginx.ingress.kubernetes.io/whitelist-source-range: "{{ .Values.ingress.annotations.nginx.ingress.kubernetes.io/whitelist-source-range }}"
 spec:
   tls:
     - hosts:

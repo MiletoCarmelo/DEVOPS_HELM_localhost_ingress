@@ -1,27 +1,24 @@
-# values-dev.yaml
 environment: dev
-# domain: quant-cm.192.168.58.2.nip.io
 domain: intranet-quant-cm.ch
 infos:
   email: quant-cm@gmail.com
 service:
   port: 80
-  targetPort: 80  # Changé pour correspondre au port de l'application
-  nodePort: 30007  # Choisissez un port dans la plage 30000-32767
+  targetPort: 80
+  nodePort: 30007
   selector:
     app: success-app
 ingress:
   enabled: true
   annotations:
-    cluster-issuer: "selfsigned"
-    class: "nginx"
-    nginx: 
-      ssl-redirect: "false"  # Désactivé pour le développement local
-  whitelistSourceRange: "192.168.1.0/24"  # Remplacez par la plage IP de votre réseau local
+    cert-manager.io/cluster-issuer: "selfsigned"
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/whitelist-source-range: "192.168.1.0/24"
   hosts:
     paths:
       - path: /
         pathType: Prefix
   tls:
-    - secretName: quant-cm-tls-dev    # Un seul secret pour tout
-      certificateName: quant-cm-tls-dev  # Un seul certificate pour tout
+    - secretName: quant-cm-tls-dev
+      certificateName: quant-cm-tls-dev
