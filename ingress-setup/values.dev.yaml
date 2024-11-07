@@ -3,7 +3,7 @@ baseDomain: mm.ch
 
 # Configuration TLS unique
 tls:
-  secretName: quant-cm-tls-dev
+  secretName: central-ingress-tls-dev
   issuer: selfsigned
 
 # Configuration globale

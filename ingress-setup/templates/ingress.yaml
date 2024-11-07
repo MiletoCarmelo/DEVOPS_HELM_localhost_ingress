@@ -1,14 +1,14 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: central-ingress
+  name: {{ .Values.module }}-ingress
   namespace: {{ .Values.environment }}
   annotations:
     {{- toYaml .Values.ingress.annotations | nindent 4 }}
 spec:
   ingressClassName: {{ .Values.ingress.className }}
   tls:
-    - secretName: {{ .Values.tls.secretName }}
+    - secretName: {{ .Values.module }}-{{ .Values.environment }}-secret
       hosts:
         {{- range .Values.services }}
         - {{ .subdomain }}.{{ $.Values.baseDomain }}
