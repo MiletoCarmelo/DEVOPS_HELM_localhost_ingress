@@ -23,8 +23,8 @@ spec:
     - host: {{ .subdomain }}.{{ $.Values.baseDomain }}
       http:
         paths:
-          - path: /
-            pathType: Prefix
+          - path: {{ .service.path }}
+            pathType: {{ .service.pathType }}
             backend:
               service:
                 name: {{ .service.name }}

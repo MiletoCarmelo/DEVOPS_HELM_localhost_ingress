@@ -20,8 +20,12 @@ services:
     service:
       name: success-app-service
       port: 80
+      path: /
+      pathType: Prefix
   - name: trading-strategy
     subdomain: trading
     service:
       name: dev-tsa-service
       port: 80
+      path: /
+      pathType: Prefix
