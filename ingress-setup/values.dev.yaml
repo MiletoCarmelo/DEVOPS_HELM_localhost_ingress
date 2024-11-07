@@ -22,19 +22,21 @@ ingress:
 
 # Définition des services
 services:
-  - name: trading-strategy
+  - name: tsa-dev
     subdomain: trading
     service:
-      name: dev-tsa-service
+      name: tsa-dev-service
       port: 80
       targetPort: 80
+      selector:
+        app: tsa-dev
     path: /
     pathType: Prefix
     
   - name: success-app
     subdomain: success
     service:
-      name: quant-cm-service
+      name: success-app-service
       port: 80
       targetPort: 80
       nodePort: 30007
