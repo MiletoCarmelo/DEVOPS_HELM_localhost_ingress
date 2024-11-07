@@ -4,13 +4,15 @@ kind: Service
 metadata:
   name: quant-cm-service
   namespace: {{ .Values.environment }}
+  labels:
+    app: {{ .Values.service.selector.app }}
 spec:
   # type: ClusterIP
   type: NodePort
   ports:
     - port: {{ .Values.service.port }}
       targetPort: {{ .Values.service.targetPort }}
-      # protocol: TCP
+      protocol: TCP
       nodePort: {{ .Values.service.nodePort }}
   selector:
     app: {{ .Values.service.selector.app }}

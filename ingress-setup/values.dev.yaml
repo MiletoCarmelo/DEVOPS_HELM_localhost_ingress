@@ -1,6 +1,7 @@
 # values-dev.yaml
 environment: dev
-domain: quant-cm.192.168.58.2.nip.io
+# domain: quant-cm.192.168.58.2.nip.io
+domain: intranet-quant-cm.ch
 infos:
   email: quant-cm@gmail.com
 service:
@@ -13,6 +14,8 @@ ingress:
   enabled: true
   annotations:
     cert-manager.io/cluster-issuer: "selfsigned"
+    class: "nginx"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"  # Désactivé pour le développement local
   whitelistSourceRange: "192.168.1.0/24"  # Remplacez par la plage IP de votre réseau local
   hosts:
     paths:
