@@ -5,9 +5,9 @@ metadata:
   name: quant-cm-ingress
   namespace: {{ .Values.environment }}
   annotations:
-    kubernetes.io/ingress.class: "{{ .Values.ingress.annotations 0 "kubernetes.io/ingress.class"}}"
+    kubernetes.io/ingress.class: "{{ .Values.ingress.annotations.cluster-issuer}}"
     cert-manager.io/cluster-issuer: "{{ index .Values.ingress.annotations "cert-manager.io/cluster-issuer" }}-{{ .Values.environment }}" 
-    nginx.ingress.kubernetes.io/ssl-redirect: "{{ .Values.ingress.annotations 0 "nginx.ingress.kubernetes.io/ssl-redirect" }}"
+    nginx.ingress.kubernetes.io/ssl-redirect: "{{ .Values.ingress.annotations.nginx.ssl-redirect }}"
     # nginx.ingress.kubernetes.io/whitelist-source-range: "{{ .Values.ingress.whitelistSourceRange }}"
 spec:
   tls:

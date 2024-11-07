@@ -13,9 +13,10 @@ service:
 ingress:
   enabled: true
   annotations:
-    cert-manager.io/cluster-issuer: "selfsigned"
+    cluster-issuer: "selfsigned"
     class: "nginx"
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"  # Désactivé pour le développement local
+    nginx: 
+      ssl-redirect: "false"  # Désactivé pour le développement local
   whitelistSourceRange: "192.168.1.0/24"  # Remplacez par la plage IP de votre réseau local
   hosts:
     paths:
