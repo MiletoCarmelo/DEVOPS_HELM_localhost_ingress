@@ -1,24 +1,21 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: central-ingress  # Un seul ingress centralisé
+  name: central-ingress
   namespace: {{ .Values.environment }}
-  labels:
-    {{- include "ingress-setup.labels" . | nindent 4 }}
   annotations:
-    {{- range $key, $value := .Values.ingress.annotations }}
-    {{ $key }}: {{ $value | quote }}
-    {{- end }}
+    {{- toYaml .Values.ingress.annotations | nindent 4 }}
 spec:
+  ingressClassName: {{ .Values.ingress.className }}
   tls:
     - secretName: {{ .Values.tls.secretName }}
       hosts:
         {{- range .Values.services }}
-        - {{ include "ingress-setup.hostname" (dict "subdomain" .subdomain "baseDomain" $.Values.baseDomain) }}
+        - {{ .subdomain }}.{{ $.Values.baseDomain }}
         {{- end }}
   rules:
     {{- range .Values.services }}
-    - host: {{ include "ingress-setup.hostname" (dict "subdomain" .subdomain "baseDomain" $.Values.baseDomain) }}
+    - host: {{ .subdomain }}.{{ $.Values.baseDomain }}
       http:
         paths:
           - path: /

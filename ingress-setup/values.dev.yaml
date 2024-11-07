@@ -1,32 +1,26 @@
 environment: dev
 baseDomain: mm.ch
 
-# Configuration TLS globale
+# Configuration TLS unique
 tls:
-  enabled: true
-  issuer: selfsigned
   secretName: quant-cm-tls-dev
-  certificateName: quant-cm-tls-dev
+  issuer: selfsigned
 
-# Configuration Ingress globale
+# Configuration globale
 ingress:
-  enabled: true
+  className: nginx
   annotations:
-    kubernetes.io/ingress.class: "nginx"
     cert-manager.io/cluster-issuer: "selfsigned-dev"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 
-# Définition unique des services
+# Services
 services:
   - name: success-app
     subdomain: success
     service:
-      name: success-app-service  # Un seul nom cohérent
+      name: success-app-service
       port: 80
-      targetPort: 80
-      selector:
-        app: success-app
 
   - name: trading-strategy
     subdomain: trading

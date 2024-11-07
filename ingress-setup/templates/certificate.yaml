@@ -1,9 +1,7 @@
 apiVersion: cert-manager.io/v1
 kind: Certificate
 metadata:
-  labels:
-    {{- include "ingress-setup.labels" . | nindent 4 }}
-  name: {{ include "ingress-setup.tlsSecretName" . }}
+  name: {{ .Values.tls.secretName }}
   namespace: {{ .Values.environment }}
 spec:
   secretName: {{ .Values.tls.secretName }}
@@ -14,7 +12,7 @@ spec:
     {{- range .Values.services }}
     - {{ .subdomain }}.{{ $.Values.baseDomain }}
     {{- end }}
-  commonName: "*.{{ .Values.baseDomain }}"  # Wildcard certificate pour tous les sous-domaines
+  commonName: "*.{{ .Values.baseDomain }}"
   duration: 2160h
   renewBefore: 360h
   privateKey:
