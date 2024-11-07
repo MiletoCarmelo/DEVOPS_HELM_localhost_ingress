@@ -1,47 +1,35 @@
-module : central
 environment: dev
 baseDomain: mm.ch
-infos:
-  email: quant-cm@gmail.com
 
-# Configuration globale TLS
+# Configuration TLS globale
 tls:
   enabled: true
   issuer: selfsigned
   secretName: quant-cm-tls-dev
   certificateName: quant-cm-tls-dev
 
-# Configuration globale Ingress
+# Configuration Ingress globale
 ingress:
   enabled: true
   annotations:
     kubernetes.io/ingress.class: "nginx"
-    cert-manager.io/cluster-issuer: "selfsigned"
+    cert-manager.io/cluster-issuer: "selfsigned-dev"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-    # nginx.ingress.kubernetes.io/whitelist-source-range: "127.0.0.1"
 
-# Définition des services
+# Définition unique des services
 services:
-  - name: tsa-dev
-    subdomain: trading
-    service:
-      name: tsa-dev-service
-      port: 80
-      targetPort: 80
-      selector:
-        app: tsa-dev
-    path: /
-    pathType: Prefix
-    
   - name: success-app
     subdomain: success
     service:
-      name: success-app-service
+      name: success-app-service  # Un seul nom cohérent
       port: 80
       targetPort: 80
-      nodePort: 30007
       selector:
         app: success-app
-    path: /
-    pathType: Prefix
+
+  - name: trading-strategy
+    subdomain: trading
+    service:
+      name: dev-tsa-service
+      port: 80
