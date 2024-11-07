@@ -6,7 +6,7 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: {{ .Values.ingress.annotations.ingressClass }}
     cert-manager.io/cluster-issuer: {{ .Values.ingress.annotations.clusterIssuer }}-{{ .Values.environment }}
-    nginx.ingress.kubernetes.io/ssl-redirect: {{ .Values.ingress.annotations.nginx.sslRedirect }}
+    nginx.ingress.kubernetes.io/ssl-redirect: "{{ .Values.ingress.annotations.nginx.sslRedirect }}"
     nginx.ingress.kubernetes.io/whitelist-source-range: {{ .Values.ingress.annotations.nginx.whiteListSourceRange }}
 spec:
   tls:
