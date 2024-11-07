@@ -11,10 +11,11 @@ service:
 ingress:
   enabled: true
   annotations:
-    cert-manager.io/cluster-issuer: "selfsigned"
-    kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/whitelist-source-range: "192.168.1.0/24"
+    clusterIssuer: "selfsigned"
+    ingressClass: "nginx"
+    nginx: 
+      sslRedirect: "false"
+      whiteListSourceRange: "192.168.1.0/24"
   hosts:
     paths:
       - path: /
