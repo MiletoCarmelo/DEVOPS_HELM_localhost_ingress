@@ -1,16 +1,13 @@
 module: ingress-setup
 environment: dev
 baseDomain: mm.ch
-
 tls:
   issuer: selfsigned
   enabled: true
-  secretName: ingress-tls
 
 ingress:
   className: nginx
   annotations:
-    cert-manager.io/cluster-issuer: "{{ .Values.module }}-{{ .Values.environment }}-issuer"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 

@@ -28,7 +28,7 @@ helm.sh/chart: {{ .Chart.Name }}-{{ .Chart.Version }}
 Create the name of the TLS secret
 */}}
 {{- define "ingress-setup.tlsSecretName" -}}
-{{- printf "%s-%s" .Values.tls.secretName .Values.environment -}}
+{{- printf "%s-%s-tls" .Values.module .Values.environment -}}
 {{- end }}
 
 {{/*
