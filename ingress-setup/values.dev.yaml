@@ -17,14 +17,13 @@ ingress:
 
 services:
   - name: success-app
-    path: /success
+    path: /success/
     service:
       name: success-app-dev-service
       port: 80
       pathType: Prefix
     annotations:
       nginx.ingress.kubernetes.io/rewrite-target: /
-      nginx.ingress.kubernetes.io/use-regex: "true"
 
   - name: trading-strategy
     path: /trading-strategy-analysis/?(.*)
