@@ -27,20 +27,20 @@ services:
       nginx.ingress.kubernetes.io/rewrite-target: /$1
 
   - name: trading-strategy
-    path: /trading-strategy-analysis/
+    path: /trading-strategy-analysis(/|$)(.*)
     service:
       name: tsa-dev-service
       port: 80
       pathType: Prefix
     annotations:
-      nginx.ingress.kubernetes.io/rewrite-target: /trading-strategy-analysis/$1  # Ne pas réécrire complètement le path
+      nginx.ingress.kubernetes.io/rewrite-target: /$1
       nginx.ingress.kubernetes.io/proxy-body-size: "50m"
       nginx.ingress.kubernetes.io/proxy-connect-timeout: "90"
       nginx.ingress.kubernetes.io/proxy-send-timeout: "90"
       nginx.ingress.kubernetes.io/proxy-read-timeout: "90"
       nginx.ingress.kubernetes.io/configuration-snippet: |
-        proxy_set_header X-Forwarded-Prefix /trading-strategy-analysis/;
-        proxy_set_header X-Script-Name /rading-strategy-analysis/;
+        proxy_set_header X-Forwarded-Prefix /trading-strategy-analysis;
+        proxy_set_header X-Script-Name /trading-strategy-analysis;
 
   - name: optionsviz
     path: /optionviz/
