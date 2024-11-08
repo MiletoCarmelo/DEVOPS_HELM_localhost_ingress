@@ -27,13 +27,13 @@ services:
       nginx.ingress.kubernetes.io/rewrite-target: /$1
 
   - name: trading-strategy
-    path: /tsa/
+    path: //trading-strategy-analysis
     service:
       name: tsa-dev-service
       port: 80
       pathType: Prefix
     annotations:
-      nginx.ingress.kubernetes.io/rewrite-target: /tsa/$1  # Ne pas réécrire complètement le path
+      nginx.ingress.kubernetes.io/rewrite-target: /trading-strategy-analysis/$1  # Ne pas réécrire complètement le path
       nginx.ingress.kubernetes.io/proxy-body-size: "50m"
       nginx.ingress.kubernetes.io/proxy-connect-timeout: "90"
       nginx.ingress.kubernetes.io/proxy-send-timeout: "90"
