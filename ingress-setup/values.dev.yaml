@@ -27,7 +27,7 @@ services:
       nginx.ingress.kubernetes.io/rewrite-target: /$1
 
   - name: trading-strategy
-    path: /trading-strategy-analysis
+    path: /trading-strategy-analysis/
     service:
       name: tsa-dev-service
       port: 80
