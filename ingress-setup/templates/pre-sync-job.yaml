@@ -8,26 +8,28 @@ metadata:
 spec:
   template:
     spec:
+      serviceAccountName: ingress-setup-sa
       containers:
       - name: setup
         image: bitnami/kubectl:latest
         command: ["/bin/sh", "-c"]
         args:
         - |
-          # Activer l'addon ingress si nécessaire
-          if ! minikube addons list | grep -q "ingress.*enabled"; then
-            minikube addons enable ingress
-          fi
-          
-          # Attendre que l'ingress soit prêt
+          # Attendre que le controller ingress-nginx soit disponible
+          echo "Waiting for ingress-nginx controller..."
+          until kubectl get pods -n ingress-nginx -l app.kubernetes.io/component=controller 2>/dev/null; do
+            sleep 5
+          done
+
+          # Attendre que les pods soient ready
+          echo "Waiting for ingress-nginx pods to be ready..."
           kubectl wait --namespace ingress-nginx \
             --for=condition=ready pod \
             --selector=app.kubernetes.io/component=controller \
             --timeout=120s
 
-          # Sauvegarder les informations d'ingress dans un ConfigMap
+          # Créer le ConfigMap avec les informations des domaines
           DOMAINS="{{ range .Values.services }}{{ .subdomain }}.{{ $.Values.baseDomain }} {{ end }}"
-          INGRESS_IP=$(kubectl get ingress -n {{ .Release.Namespace }} {{ .Release.Name }}-dev-ingress -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
           
           cat <<EOF | kubectl apply -f -
           apiVersion: v1
@@ -37,7 +39,35 @@ spec:
             namespace: {{ .Release.Namespace }}
           data:
             domains: "$DOMAINS"
-            ingress_ip: "$INGRESS_IP"
           EOF
       restartPolicy: Never
   backoffLimit: 2
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: ingress-setup-sa
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: ingress-setup-role
+rules:
+- apiGroups: [""]
+  resources: ["pods", "configmaps"]
+  verbs: ["get", "list", "watch", "create", "update", "patch"]
+- apiGroups: [""]
+  resources: ["pods/status"]
+  verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ingress-setup-rolebinding
+subjects:
+- kind: ServiceAccount
+  name: ingress-setup-sa
+roleRef:
+  kind: Role
+  name: ingress-setup-role
+  apiGroup: rbac.authorization.k8s.io
