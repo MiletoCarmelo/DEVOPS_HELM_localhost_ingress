@@ -18,22 +18,32 @@ ingress:
 
 services:
   - name: success-app
-    path: /success/  # Capture tout après /success/
+    path: /success/(.*)
     service:
-      name: success-app-dev-service  # Modifier pour correspondre au nom réel
+      name: success-app-dev-service
       port: 80
       pathType: Prefix
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /$1
 
   - name: trading-strategy
-    path: /tsa/  # Capture tout après /tsa/
+    path: /tsa/(.*)
     service:
-      name: tsa-dev-service  # Modifier pour correspondre au nom réel
+      name: tsa-dev-service
       port: 80
       pathType: Prefix
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /tsa/$1  # Ne pas réécrire complètement le path
+      nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+      nginx.ingress.kubernetes.io/proxy-connect-timeout: "90"
+      nginx.ingress.kubernetes.io/proxy-send-timeout: "90"
+      nginx.ingress.kubernetes.io/proxy-read-timeout: "90"
 
   - name: optionsviz
-    path: /optionviz/  # Capture tout après /optionviz/
+    path: /optionviz/(.*)
     service:
-      name: optionviz-dev-service  # Modifier pour correspondre au nom réel
+      name: optionviz-dev-service
       port: 80
       pathType: Prefix
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /$1
