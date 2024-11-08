@@ -17,24 +17,24 @@ ingress:
 
 services:
   - name: success-app
-    path: /success(/|$)(.*)
+    path: /success/?(.*)
     service:
       name: success-app-dev-service
       port: 80
       pathType: Prefix
     annotations:
-      nginx.ingress.kubernetes.io/rewrite-target: /$2
+      nginx.ingress.kubernetes.io/rewrite-target: /$1
       nginx.ingress.kubernetes.io/use-regex: "true"
 
   - name: trading-strategy
-    path: /trading-strategy-analysis(/|$)(.*)
+    path: /trading-strategy-analysis/?(.*)
     service:
       name: tsa-dev-service
       port: 80
       pathType: Prefix
     annotations:
       # Correction de la règle de réécriture
-      nginx.ingress.kubernetes.io/rewrite-target: /$2
+      nginx.ingress.kubernetes.io/rewrite-target: /$1
       nginx.ingress.kubernetes.io/use-regex: "true"
       nginx.ingress.kubernetes.io/proxy-body-size: "50m"
       nginx.ingress.kubernetes.io/proxy-connect-timeout: "90"
@@ -42,11 +42,11 @@ services:
       nginx.ingress.kubernetes.io/proxy-read-timeout: "90"
 
   - name: optionsviz
-    path: /optionviz(/|$)(.*)
+    path: /optionviz/?(.*)
     service:
       name: optionviz-dev-service
       port: 80
       pathType: Prefix
     annotations:
-      nginx.ingress.kubernetes.io/rewrite-target: /$2
+      nginx.ingress.kubernetes.io/rewrite-target: /$1
       nginx.ingress.kubernetes.io/use-regex: "true"
