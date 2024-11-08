@@ -1,0 +1,43 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: ingress-setup-job
+  annotations:
+    argocd.argoproj.io/hook: PreSync
+    argocd.argoproj.io/hook-delete-policy: HookSucceeded
+spec:
+  template:
+    spec:
+      containers:
+      - name: setup
+        image: bitnami/kubectl:latest
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          # Activer l'addon ingress si nécessaire
+          if ! minikube addons list | grep -q "ingress.*enabled"; then
+            minikube addons enable ingress
+          fi
+          
+          # Attendre que l'ingress soit prêt
+          kubectl wait --namespace ingress-nginx \
+            --for=condition=ready pod \
+            --selector=app.kubernetes.io/component=controller \
+            --timeout=120s
+
+          # Sauvegarder les informations d'ingress dans un ConfigMap
+          DOMAINS="{{ range .Values.services }}{{ .subdomain }}.{{ $.Values.baseDomain }} {{ end }}"
+          INGRESS_IP=$(kubectl get ingress -n {{ .Release.Namespace }} {{ .Release.Name }}-dev-ingress -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+          
+          cat <<EOF | kubectl apply -f -
+          apiVersion: v1
+          kind: ConfigMap
+          metadata:
+            name: ingress-domains-config
+            namespace: {{ .Release.Namespace }}
+          data:
+            domains: "$DOMAINS"
+            ingress_ip: "$INGRESS_IP"
+          EOF
+      restartPolicy: Never
+  backoffLimit: 2
