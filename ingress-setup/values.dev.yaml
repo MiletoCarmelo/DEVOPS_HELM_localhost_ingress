@@ -39,8 +39,8 @@ services:
       nginx.ingress.kubernetes.io/proxy-send-timeout: "90"
       nginx.ingress.kubernetes.io/proxy-read-timeout: "90"
       nginx.ingress.kubernetes.io/configuration-snippet: |
-        proxy_set_header X-Forwarded-Prefix /trading-strategy-analysis;
-        proxy_set_header X-Script-Name /trading-strategy-analysis;
+        proxy_set_header X-Forwarded-Prefix /trading-strategy-analysis/;
+        proxy_set_header X-Script-Name /rading-strategy-analysis/;
 
   - name: optionsviz
     path: /optionviz/
