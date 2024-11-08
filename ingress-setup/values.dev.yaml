@@ -33,7 +33,8 @@ services:
       port: 80
       pathType: Prefix
     annotations:
-      nginx.ingress.kubernetes.io/rewrite-target: /$1
+      # Correction de la règle de réécriture
+      nginx.ingress.kubernetes.io/rewrite-target: /trading-strategy-analysis/$2
       nginx.ingress.kubernetes.io/proxy-body-size: "50m"
       nginx.ingress.kubernetes.io/proxy-connect-timeout: "90"
       nginx.ingress.kubernetes.io/proxy-send-timeout: "90"
