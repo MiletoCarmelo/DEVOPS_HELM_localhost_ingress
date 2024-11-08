@@ -17,7 +17,7 @@ ingress:
 
 services:
   - name: success-app
-    path: /success/
+    path: /
     service:
       name: success-app-dev-service
       port: 80
