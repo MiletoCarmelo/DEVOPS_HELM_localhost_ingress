@@ -49,4 +49,4 @@ services:
     annotations:
       nginx.ingress.kubernetes.io/rewrite-target: /
       nginx.ingress.kubernetes.io/configuration-snippet: |
-        rewrite ^/optionviz/(.*) /$1 break;
+        rewrite ^/optionviz/ /$1 break;
