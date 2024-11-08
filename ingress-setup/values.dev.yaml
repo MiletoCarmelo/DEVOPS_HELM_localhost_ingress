@@ -41,7 +41,7 @@ services:
       nginx.ingress.kubernetes.io/proxy-read-timeout: "90"
 
   - name: optionsviz
-    path: /optionviz/
+    path: /optionviz(/|$)(.*)
     service:
       name: optionviz-dev-service
       port: 80
