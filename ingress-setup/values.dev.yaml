@@ -4,47 +4,42 @@ baseDomain: mm.ch
 tls:
   issuer: selfsigned
   enabled: true
-
 ingress:
   className: nginx
   ports:
     http: 30753
     https: 31098
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"  # Pour le test initial
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/rewrite-target: /$1  # Important pour le path-based routing
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-
-services:
-  - name: success-app
-    path: /success/
-    service:
-      name: success-app-dev-service
-      port: 80
+  services:
+    - name: success-app
+      path: /success/(.*)
+      service:
+        name: success-app-dev-service
+        port: 80
       pathType: Prefix
-    annotations:
-      nginx.ingress.kubernetes.io/rewrite-target: /$1
-
-  - name: trading-strategy
-    path: /trading-strategy-analysis/
-    service:
-      name: tsa-dev-service
-      port: 80
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$1
+    - name: trading-strategy
+      path: /trading-strategy-analysis/(.*)
+      service:
+        name: tsa-dev-service
+        port: 80
       pathType: Prefix
-    annotations:
-      # Correction de la règle de réécriture
-      nginx.ingress.kubernetes.io/rewrite-target: /
-      nginx.ingress.kubernetes.io/proxy-body-size: "50m"
-      nginx.ingress.kubernetes.io/proxy-connect-timeout: "90"
-      nginx.ingress.kubernetes.io/proxy-send-timeout: "90"
-      nginx.ingress.kubernetes.io/proxy-read-timeout: "90"
-
-  - name: optionsviz
-    path: /optionviz/
-    service:
-      name: optionviz-dev-service
-      port: 80
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$1
+        nginx.ingress.kubernetes.io/proxy-body-size: "50m"
+        nginx.ingress.kubernetes.io/proxy-connect-timeout: "90"
+        nginx.ingress.kubernetes.io/proxy-send-timeout: "90"
+        nginx.ingress.kubernetes.io/proxy-read-timeout: "90"
+    - name: optionsviz
+      path: /optionviz/(.*)
+      service:
+        name: optionviz-dev-service
+        port: 80
       pathType: Prefix
-    annotations:
-      nginx.ingress.kubernetes.io/rewrite-target: /$1
+      annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /$1
