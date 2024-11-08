@@ -18,21 +18,21 @@ ingress:
 
 services:
   - name: success-app
-    path: /success/(.*)  # Capture tout après /success/
+    path: /success/  # Capture tout après /success/
     service:
       name: success-app-dev-service  # Modifier pour correspondre au nom réel
       port: 80
       pathType: Prefix
 
   - name: trading-strategy
-    path: /tsa/(.*)  # Capture tout après /tsa/
+    path: /tsa/  # Capture tout après /tsa/
     service:
       name: tsa-dev-service  # Modifier pour correspondre au nom réel
       port: 80
       pathType: Prefix
 
   - name: optionsviz
-    path: /optionviz/(.*)  # Capture tout après /optionviz/
+    path: /optionviz/  # Capture tout après /optionviz/
     service:
       name: optionviz-dev-service  # Modifier pour correspondre au nom réel
       port: 80
