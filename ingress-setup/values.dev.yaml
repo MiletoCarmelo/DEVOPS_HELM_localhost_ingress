@@ -47,4 +47,4 @@ services:
       port: 80
       pathType: Prefix
     annotations:
-      nginx.ingress.kubernetes.io/rewrite-target: /
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
