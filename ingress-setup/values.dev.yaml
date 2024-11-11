@@ -26,22 +26,22 @@ ingress:
 
 services:
   - name: success-app
-    path: /success(/|$)(.*)    # Modifié pour matcher avec regex
+    path: /success(/|$)(.*)
     service:
       name: success-app-dev-service
       port: 80
-    pathType: ImplementationSpecific  # Changé de Prefix à ImplementationSpecific
+    pathType: Prefix          # Doit être Exact, Prefix, ou ImplementationSpecific
 
   - name: trading-strategy
-    path: /trading-strategy-analysis(/|$)(.*)    # Modifié pour matcher avec regex
+    path: /trading-strategy-analysis(/|$)(.*)
     service:
       name: tsa-dev-service
       port: 80
-    pathType: ImplementationSpecific  # Changé de Prefix à ImplementationSpecific
+    pathType: Prefix          # Doit être Exact, Prefix, ou ImplementationSpecific
 
   - name: optionsviz
-    path: /optionsviz(/|$)(.*)    # Modifié pour matcher avec regex
+    path: /optionsviz(/|$)(.*)
     service:
       name: optionviz-dev-service
       port: 80
-    pathType: ImplementationSpecific  # Changé de Prefix à ImplementationSpecific
+    pathType: Prefix          # Doit être Exact, Prefix, ou ImplementationSpecific

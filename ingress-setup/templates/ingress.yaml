@@ -11,20 +11,22 @@ metadata:
     {{- end }}
 spec:
   ingressClassName: {{ .Values.ingress.className }}
-  tls:
-    - hosts:
-        - {{ .Values.baseDomain }}
-      secretName: {{ include "ingress-setup.tlsSecretName" . }}
   rules:
     - host: {{ .Values.baseDomain }}
       http:
         paths:
-        {{- range .Values.services }}
+          {{- range .Values.services }}
           - path: {{ .path }}
-            pathType: {{ .service.pathType }}
+            pathType: {{ .pathType }}
             backend:
               service:
                 name: {{ .service.name }}
                 port:
                   number: {{ .service.port }}
-        {{- end }}
+          {{- end }}
+  {{- if .Values.tls.enabled }}
+  tls:
+    - hosts:
+        - {{ .Values.baseDomain }}
+      secretName: {{ include "ingress-setup.tlsSecretName" . }}
+  {{- end }}
