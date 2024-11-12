@@ -18,22 +18,22 @@ ingress:
 
 services:
   - name: success-app
-    path: /success/
     service:
       name: success-app-dev-service
       port: 80
       pathType: Prefix
+      path: /success/
 
   - name: trading-strategy
-    path: /trading-strategy-analysis/
     service:
       name: tsa-dev-service
       port: 80
       pathType: Prefix
+      path: /trading-strategy-analysis/
 
   - name: optionsviz
-    path: /optionviz
     service:
       name: optionviz-dev-service
       port: 80
       pathType: Prefix
+      path: /optionviz
