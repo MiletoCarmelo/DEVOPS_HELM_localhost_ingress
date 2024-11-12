@@ -1,7 +1,6 @@
 module: ingress-setup
 environment: dev
 baseDomain: mm.ch
-
 tls:
   issuer: selfsigned
   enabled: true
@@ -12,37 +11,29 @@ ingress:
     http: 30753
     https: 31098
   annotations:
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
-    nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"  # Pour le test initial
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1  # Important pour le path-based routing
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-    nginx.ingress.kubernetes.io/proxy-body-size: "50m"
-    nginx.ingress.kubernetes.io/proxy-connect-timeout: "90"
-    nginx.ingress.kubernetes.io/proxy-send-timeout: "90"
-    nginx.ingress.kubernetes.io/proxy-read-timeout: "90"
 
 services:
   - name: success-app
     path: /success/
-    pathType: Prefix
     service:
       name: success-app-dev-service
       port: 80
-      targetPort: 80
+      pathType: Prefix
 
   - name: trading-strategy
     path: /trading-strategy-analysis/
-    pathType: Prefix
     service:
       name: tsa-dev-service
       port: 80
-      targetPort: 80
+      pathType: Prefix
 
   - name: optionsviz
-    path: /optionsviz/
-    pathType: Prefix
+    path: /optionviz
     service:
       name: optionviz-dev-service
       port: 80
-      targetPort: 80
+      pathType: Prefix

@@ -15,15 +15,15 @@ spec:
     - secretName: {{ include "ingress-setup.tlsSecretName" . }}
       hosts:
         {{- range .Values.services }}
-        - {{ $.Values.baseDomain }}
+        - {{ .subdomain }}.{{ $.Values.baseDomain }}
         {{- end }}
   rules:
     {{- range .Values.services }}
-    - host: {{ $.Values.baseDomain }}
+    - host: {{ .subdomain }}.{{ $.Values.baseDomain }}
       http:
         paths:
-          - path: {{ .path }}
-            pathType: {{ .pathType }}
+          - path: {{ .service.path }}
+            pathType: {{ .service.pathType }}
             backend:
               service:
                 name: {{ .service.name }}
