@@ -12,21 +12,21 @@ ingress:
   annotations:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/rewrite-target: /$2      # Changé de /$1 à /$2
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 services:
   - service:
       name: optionsviz-dev-service
       port: 80
       pathType: Prefix
-      path: /optionviz(/|$)(.*)      # Ajout de la regex pour le rewrite
+      path: /optionviz(/|$)(.*)      # Le premier groupe est ignoré, le second est utilisé pour le rewrite
   - service:
       name: success-app-dev-service
       port: 80
       pathType: Prefix
-      path: /success(/|$)(.*)        # Ajout de la regex pour le rewrite
+      path: /success(/|$)(.*)
   - service:
       name: tsa-dev-service
       port: 80
       pathType: Prefix
-      path: /trading-strategy-analysis(/|$)(.*)    # Ajout de la regex pour le rewrite
+      path: /trading-strategy-analysis(/|$)(.*)
