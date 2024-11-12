@@ -6,15 +6,6 @@ Expand the name of the chart.
 {{- end }}
 
 {{/*
-Create a fully qualified hostname for a service
-*/}}
-{{- define "ingress-setup.hostname" -}}
-{{- $subdomain := .subdomain -}}
-{{- $baseDomain := .baseDomain -}}
-{{- printf "%s.%s" $subdomain $baseDomain -}}
-{{- end }}
-
-{{/*
 Create unified labels for ingress-setup components
 */}}
 {{- define "ingress-setup.labels" -}}
@@ -37,10 +28,3 @@ Determine if TLS is enabled
 {{- define "ingress-setup.tlsEnabled" -}}
 {{- if .Values.tls.enabled }}true{{ else }}false{{ end -}}
 {{- end }}
-
-
-{{- define "ingress-setup.validateSecretName" -}}
-{{- if not .Values.tls.secretName -}}
-{{- fail "tls.secretName must be set in values file" -}}
-{{- end -}}
-{{- end -}}

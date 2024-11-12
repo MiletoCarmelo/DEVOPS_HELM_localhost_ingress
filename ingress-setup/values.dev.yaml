@@ -16,17 +16,17 @@ ingress:
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
 services:
   - service:
-      name: optionsviz-dev-service    # Un seul service pour optionsviz
+      name: optionsviz-dev-service
       port: 80
       pathType: Prefix
-      path: /optionviz/
+      path: /optionviz(/|$)(.*)      # Ajout de la regex pour le rewrite
   - service:
       name: success-app-dev-service
       port: 80
       pathType: Prefix
-      path: /success/
+      path: /success(/|$)(.*)        # Ajout de la regex pour le rewrite
   - service:
       name: tsa-dev-service
       port: 80
       pathType: Prefix
-      path: /trading-strategy-analysis/
+      path: /trading-strategy-analysis(/|$)(.*)    # Ajout de la regex pour le rewrite
