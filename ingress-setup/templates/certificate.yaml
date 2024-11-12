@@ -6,15 +6,13 @@ metadata:
   labels:
     {{- include "ingress-setup.labels" . | nindent 4 }}
 spec:
-  secretName: {{ include "ingress-setup.tlsSecretName" . }} # Utilise le helper
+  secretName: {{ include "ingress-setup.tlsSecretName" . }}
   issuerRef:
     name: {{ .Values.module }}-{{ .Values.environment }}-issuer
     kind: ClusterIssuer
   dnsNames:
-  {{- range .Values.services }}
-    - {{ .subdomain }}.{{ $.Values.baseDomain }}
-  {{- end }}
-  commonName: "*.{{ .Values.baseDomain }}"
+    - {{ .Values.baseDomain }}
+  commonName: {{ .Values.baseDomain }}
   duration: 2160h
   renewBefore: 360h
   privateKey:

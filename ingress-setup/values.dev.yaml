@@ -4,36 +4,35 @@ baseDomain: mm.ch
 tls:
   issuer: selfsigned
   enabled: true
-
 ingress:
   className: nginx
   ports:
     http: 30753
     https: 31098
   annotations:
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"  # Pour le test initial
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/rewrite-target: /$1  # Important pour le path-based routing
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-
 services:
-  - name: success-app
-    service:
+  - service:
+      name: optionsviz-dev-service    # Un seul service pour optionsviz
+      port: 80
+      pathType: Prefix
+      path: /optionviz(/|$)(.*)
+      selector:
+        app: optionsviz
+  - service:
       name: success-app-dev-service
       port: 80
       pathType: Prefix
-      path: /success
-
-  - name: trading-strategy
-    service:
+      path: /success(/|$)(.*)
+      selector:
+        app: success-app
+  - service:
       name: tsa-dev-service
       port: 80
       pathType: Prefix
-      path: /trading-strategy-analysis
-
-  - name: optionsviz
-    service:
-      name: optionsviz-dev-service
-      port: 80
-      pathType: Prefix
-      path: /optionviz
+      path: /trading-strategy-analysis(/|$)(.*)
+      selector:
+        app: trading-strategy

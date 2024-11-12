@@ -1,10 +1,9 @@
 {{- range .Values.services }}
-{{- if .service.nodePort }}
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .service.name }}  # Changé de .Values.module à .service.name
+  name: {{ .service.name }}
   namespace: {{ $.Values.environment }}
   labels:
     {{- include "ingress-setup.labels" $ | nindent 4 }}
@@ -20,5 +19,4 @@ spec:
     {{- with .service.selector }}
     {{- toYaml . | nindent 4 }}
     {{- end }}
-{{- end }}
 {{- end }}

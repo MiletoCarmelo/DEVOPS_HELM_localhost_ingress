@@ -14,14 +14,12 @@ spec:
   tls:
     - secretName: {{ include "ingress-setup.tlsSecretName" . }}
       hosts:
-        {{- range .Values.services }}
         - {{ $.Values.baseDomain }}
-        {{- end }}
   rules:
-    {{- range .Values.services }}
     - host: {{ $.Values.baseDomain }}
       http:
         paths:
+          {{- range .Values.services }}
           - path: {{ .service.path }}
             pathType: {{ .service.pathType }}
             backend:
@@ -29,4 +27,4 @@ spec:
                 name: {{ .service.name }}
                 port:
                   number: {{ .service.port }}
-    {{- end }}
+          {{- end }}
