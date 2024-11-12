@@ -29,6 +29,7 @@ services:
     service:
       name: success-app-dev-service
       port: 80
+      targetPort: 80
 
   - name: trading-strategy
     path: /trading-strategy-analysis/
@@ -36,6 +37,7 @@ services:
     service:
       name: tsa-dev-service
       port: 80
+      targetPort: 80
 
   - name: optionsviz
     path: /optionsviz/
@@ -43,3 +45,4 @@ services:
     service:
       name: optionviz-dev-service
       port: 80
+      targetPort: 80
