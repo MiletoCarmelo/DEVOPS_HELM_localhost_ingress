@@ -20,19 +20,13 @@ services:
       port: 80
       pathType: Prefix
       path: /optionviz/
-      selector:
-        app: optionsviz
   - service:
       name: success-app-dev-service
       port: 80
       pathType: Prefix
       path: /success/
-      selector:
-        app: success-app
   - service:
       name: tsa-dev-service
       port: 80
       pathType: Prefix
       path: /trading-strategy-analysis/
-      selector:
-        app: trading-strategy
