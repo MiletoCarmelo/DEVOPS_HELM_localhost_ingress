@@ -24,21 +24,21 @@ ingress:
 
 services:
   - name: success-app
-    path: /success/?(.*)    # Changé le pattern regex
+    path: /success/
     pathType: Prefix
     service:
       name: success-app-dev-service
       port: 80
 
   - name: trading-strategy
-    path: /trading-strategy-analysis/?(.*)    # Changé le pattern regex
+    path: /trading-strategy-analysis/
     pathType: Prefix
     service:
       name: tsa-dev-service
       port: 80
 
   - name: optionsviz
-    path: /optionsviz/?(.*)    # Changé le pattern regex
+    path: /optionsviz/
     pathType: Prefix
     service:
       name: optionviz-dev-service
