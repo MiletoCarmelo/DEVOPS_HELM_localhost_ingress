@@ -1,6 +1,6 @@
 module: ingress-setup
 environment: dev
-baseDomain: mm.ch
+baseDomain: dev.mm.ch    # Modifié ici pour inclure dev.
 tls:
   issuer: selfsigned
   enabled: true
