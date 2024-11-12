@@ -23,7 +23,7 @@ spec:
       http:
         paths:
           - path: {{ .path }}
-            pathType: {{ .pathType }}
+            pathType: {{ .service.pathType }}
             backend:
               service:
                 name: {{ .service.name }}
