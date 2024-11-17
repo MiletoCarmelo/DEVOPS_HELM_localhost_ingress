@@ -1,0 +1,13 @@
+apiVersion: tailscale.com/v1alpha1
+kind: Connector
+metadata:
+  name: ingress-proxy
+  namespace: tailscale
+spec:
+  hostname: {{ .Values.proxy.hostname }}
+  proxy:
+    backend:
+      service:
+        name: {{ .Values.proxy.service.name }}
+        namespace: {{ .Values.proxy.service.namespace }}
+        port: {{ .Values.proxy.service.port }}

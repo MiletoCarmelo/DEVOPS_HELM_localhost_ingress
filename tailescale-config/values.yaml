@@ -1,0 +1,6 @@
+proxy:
+  hostname: mm  # sera mm.ts.net
+  service:
+    name: ingress-setup-dev
+    namespace: dev
+    port: 80
