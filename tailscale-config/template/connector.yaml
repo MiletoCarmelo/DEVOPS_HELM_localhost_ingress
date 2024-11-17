@@ -1,13 +1,13 @@
+# connector.yaml
 apiVersion: tailscale.com/v1alpha1
-kind: Connector
+kind: Proxy
 metadata:
   name: ingress-proxy
   namespace: tailscale
 spec:
   hostname: mm
-  proxy:
-    backend:
-      service:
-        name: ingress-setup-dev
-        namespace: dev
-        port: 80
+  backend:
+    service:
+      name: ingress-setup-dev
+      namespace: dev
+      port: 80
