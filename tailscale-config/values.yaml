@@ -1,8 +1,8 @@
+# values.yaml restant le même
 ts:
   secretName: tailscale-auth
-
 proxy:
-  hostname: dev-mm  # sera mm.ts.net
+  hostname: dev-mm
   destination:
     ip: 10.43.6.114
   service:
