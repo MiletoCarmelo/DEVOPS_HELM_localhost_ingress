@@ -1,5 +1,5 @@
 proxy:
-  hostname: mm  # sera mm.ts.net
+  hostname: dev-mm  # sera mm.ts.net
   service:
     name: ingress-setup-dev
     namespace: dev

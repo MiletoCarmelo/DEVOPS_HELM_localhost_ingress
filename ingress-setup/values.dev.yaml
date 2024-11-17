@@ -12,6 +12,7 @@ ingress:
     nginx.ingress.kubernetes.io/rewrite-target: /
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
+    tailscale.com/expose: "true"
 services:
   - service:
       name: success-app-dev-service

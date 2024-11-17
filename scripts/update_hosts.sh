@@ -8,7 +8,7 @@ if [ -z "$MINIKUBE_IP" ]; then
 fi
 
 # Mettre à jour /etc/hosts
-DOMAIN="mm.ch"
+DOMAIN="dev.mm.ch"
 HOSTS_ENTRY="$MINIKUBE_IP $DOMAIN"
 
 if grep -q "$DOMAIN" /etc/hosts; then
