@@ -1,6 +1,6 @@
 # values.yaml restant le même
 ts:
-  secretName: tailscale-auth
+  secretname: tailscale-auth
 proxy:
   hostname: dev-mm
   destination:

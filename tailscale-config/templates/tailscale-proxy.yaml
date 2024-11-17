@@ -22,7 +22,7 @@ spec:
         - name: TS_AUTHKEY
           valueFrom:
             secretKeyRef:
-              name: "{{ .Values.ts.secretName }}"
+              name: "{{ .Values.ts.secretname }}"
               key: TS_AUTHKEY
         - name: TS_USERSPACE
           value: "false"
