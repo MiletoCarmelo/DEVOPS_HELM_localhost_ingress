@@ -40,6 +40,11 @@ spec:
                 secretKeyRef:
                   name: tailscale-ip-ingress
                   key: TS_IPINGRESS
+            - name: TS_HOSTNAME    # Ajoutez ceci
+              valueFrom:
+                secretKeyRef:
+                  name: tailscale-ip-hostname
+                  key: TS_IPHOSTNAME
           securityContext:
             capabilities:
               add:
