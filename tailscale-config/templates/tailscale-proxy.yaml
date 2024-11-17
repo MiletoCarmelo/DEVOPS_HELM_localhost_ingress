@@ -30,5 +30,5 @@ spec:
           value: 10.43.6.114
       securityContext:
         capabilities:
-          add:
+           add:
             - NET_ADMIN
