@@ -27,7 +27,7 @@ spec:
         - name: TS_USERSPACE
           value: "false"
         - name: TS_DEST_IP
-          value: {{ .Values.proxy.destination.ip }}
+          value: 10.43.6.114
       securityContext:
         capabilities:
           add:
