@@ -1,5 +1,10 @@
+ts:
+  secretName: tailscale-auth
+
 proxy:
   hostname: dev-mm  # sera mm.ts.net
+  destination:
+    ip: 10.43.6.114
   service:
     name: ingress-setup-dev
     namespace: dev
