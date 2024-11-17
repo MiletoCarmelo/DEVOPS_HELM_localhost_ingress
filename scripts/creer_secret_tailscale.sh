@@ -26,7 +26,7 @@ kubectl create secret generic tailscale-auth \
   --dry-run=client -o yaml | kubectl apply -f -
 
 # Créer le secret pour TS_IP_INGRESS
-echo "🔒 Création du secret Tailscale Auth..."
+echo "🔒 Création du secret Tailscale IP Ingress..."
 kubectl create secret generic tailscale-ip-ingress \
   --namespace=${NAMESPACE} \
   --from-literal=TS_IPINGRESS=${TAILSCALE_IP_INGRESS} \
