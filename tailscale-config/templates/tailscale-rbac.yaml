@@ -11,7 +11,7 @@ metadata:
   name: tailscale
 rules:
   - apiGroups: [""]
-    resourceNames: [ {{ .Values.ts.secretName }} ]
+    resourceNames: [ "{{ .Values.ts.secretName }}" ]
     resources: ["secrets"]
     verbs: ["get", "update", "patch"]
 
