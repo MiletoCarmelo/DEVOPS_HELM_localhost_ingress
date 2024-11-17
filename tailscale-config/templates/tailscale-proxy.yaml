@@ -18,16 +18,16 @@ spec:
       image: ghcr.io/tailscale/tailscale:latest
       env:
         - name: TS_KUBE_SECRET
-          value: {{ .Values.ts.secretName }}
+          value: tailscale-auth
         - name: TS_AUTHKEY
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.ts.secretName }}
+              name: tailscale-auth
               key: TS_AUTHKEY
         - name: TS_USERSPACE
           value: "false"
         - name: TS_DEST_IP
-          value: 10.43.6.114
+          value: {{ .Values.proxy.destination.ip }}
       securityContext:
         capabilities:
           add:
