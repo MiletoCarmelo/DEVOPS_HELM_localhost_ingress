@@ -22,13 +22,13 @@ spec:
         - name: TS_AUTHKEY
           valueFrom:
             secretKeyRef:
-              name: {{ .Values.ts.secretName }}
+              name: "{{ .Values.ts.secretName }}"
               key: TS_AUTHKEY
         - name: TS_USERSPACE
           value: "false"
         - name: TS_DEST_IP
-          value: 10.43.6.114
+          value: "{{ .Values.proxy.destination.ip }}"
       securityContext:
         capabilities:
-           add:
+          add:
             - NET_ADMIN
