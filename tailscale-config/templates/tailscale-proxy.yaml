@@ -22,12 +22,12 @@ spec:
         - name: TS_AUTHKEY
           valueFrom:
             secretKeyRef:
-              name: tailscale-auth
+              name: {{ .Values.ts.secretName }}
               key: TS_AUTHKEY
         - name: TS_USERSPACE
           value: "false"
         - name: TS_DEST_IP
-          value: {{ .Values.proxy.destination.ip }}
+          value: 10.43.6.114
       securityContext:
         capabilities:
            add:
