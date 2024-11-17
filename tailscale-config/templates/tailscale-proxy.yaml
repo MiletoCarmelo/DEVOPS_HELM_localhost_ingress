@@ -27,7 +27,10 @@ spec:
         - name: TS_USERSPACE
           value: "false"
         - name: TS_DEST_IP
-          value: TS_IPINGRESS
+          valueFrom:
+            secretKeyRef:
+              name: tailscale-ip-ingress
+              key: TS_IPINGRESS
       securityContext:
         capabilities:
           add:
