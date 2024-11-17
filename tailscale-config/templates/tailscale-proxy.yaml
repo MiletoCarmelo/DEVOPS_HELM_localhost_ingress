@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: v2
 kind: Pod
 metadata:
   name: tailscale-proxy
@@ -22,8 +22,8 @@ spec:
         - name: TS_AUTHKEY
           valueFrom:
             secretKeyRef:
-              - name: tailscale-auth
-                key: TS_AUTHKEY
+              name: tailscale-auth
+              key: TS_AUTHKEY
         - name: TS_USERSPACE
           value: "false"
         - name: TS_DEST_IP
