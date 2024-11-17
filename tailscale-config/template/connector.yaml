@@ -4,10 +4,10 @@ metadata:
   name: ingress-proxy
   namespace: tailscale
 spec:
-  hostname: {{ .Values.proxy.hostname }}
+  hostname: mm
   proxy:
     backend:
       service:
-        name: {{ .Values.proxy.service.name }}
-        namespace: {{ .Values.proxy.service.namespace }}
-        port: {{ .Values.proxy.service.port }}
+        name: ingress-setup-dev
+        namespace: dev
+        port: 80
