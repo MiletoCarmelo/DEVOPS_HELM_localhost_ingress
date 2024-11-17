@@ -18,14 +18,14 @@ services:
       name: success-app-dev-service
       port: 80
       pathType: Prefix
-      path: /success/(/|$)(.*)  # Modifié pour capturer le sous-chemin
+      path: /success/
   - service:
       name: tsa-dev-service
       port: 80
       pathType: Prefix
-      path: /trading-strategy-analysis/(/|$)(.*)  # Modifié
+      path: /trading-strategy-analysis/
   - service:
       name: optionsviz-dev-service
       port: 80
       pathType: Prefix
-      path: /optionviz/(/|$)(.*)  # Modifié
+      path: /optionviz/
