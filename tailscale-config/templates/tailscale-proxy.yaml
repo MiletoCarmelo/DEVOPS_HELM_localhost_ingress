@@ -50,3 +50,9 @@ spec:
             capabilities:
               add:
                 - NET_ADMIN
+          livenessProbe:    # Ajoutez cette section
+            httpGet:
+              path: /health
+              port: 41641
+            initialDelaySeconds: 30
+            periodSeconds: 60
