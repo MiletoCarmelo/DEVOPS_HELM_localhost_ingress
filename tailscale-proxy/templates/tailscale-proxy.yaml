@@ -22,8 +22,12 @@ spec:
             - |
               tailscaled --state=mem: --tun=userspace-networking &
               sleep 5
-              tailscale up --authkey="${TS_AUTHKEY}" --hostname="${TS_HOSTNAME}"
-              tailscale funnel --bg 80
+              tailscale configure \
+                --accept-routes \
+                --hostname="${TS_HOSTNAME}" \
+                --advertise-routes=192.168.68.0/24
+              tailscale up --authkey="${TS_AUTHKEY}"
+              tailscale funnel --bg http://192.168.68.6:80
               sleep infinity
           env:
             - name: TS_HOSTNAME
@@ -37,6 +41,4 @@ spec:
                   name: ts-secrets
                   key: TS_AUTHKEY
           securityContext:
-            capabilities:
-              add:
-                - NET_ADMIN
+            privileged: true
