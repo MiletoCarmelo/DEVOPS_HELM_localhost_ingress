@@ -19,6 +19,11 @@ spec:
           hostPath:
             path: /dev/net/tun
             type: CharDevice
+        - name: tailscale-state
+          emptyDir: {}
+      volumeMounts:
+        - name: tailscale-state
+          mountPath: /var/lib/tailscale
       containers:
         - name: tailscale
           image: ghcr.io/tailscale/tailscale:latest
@@ -55,7 +60,7 @@ spec:
             - "/bin/sh"
             - "-c"  
             - |
-              tailscaled --state=kube:ts-secrets --tun=tailscale0 --socket=/var/run/tailscale/tailscaled.sock &
+              tailscaled --state=kube:ts-secrets &
               sleep 5
               tailscale up --auth-key=${TS_AUTHKEY} --hostname="${TS_HOSTNAME}" --accept-routes --advertise-routes=${TS_ROUTES}
               tailscale configure --accept-routes=true
