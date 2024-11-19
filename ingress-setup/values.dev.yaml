@@ -11,19 +11,17 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
     nginx.ingress.kubernetes.io/rewrite-target: /
-    # Ajout pour gérer les requêtes sans host
     nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/enable-access-log: "true"
-  services:
-    - name: success-app-dev-service
-      port: 80
-      pathType: Prefix
-      path: /success
-    - name: tsa-dev-service
-      port: 80
-      pathType: Prefix
-      path: /trading-strategy-analysis
-    - name: optionsviz-dev-service
-      port: 80
-      pathType: Prefix
-      path: /optionviz
+services:
+  - name: success-app-dev-service
+    port: 80
+    pathType: Prefix
+    path: /success
+  - name: tsa-dev-service
+    port: 80
+    pathType: Prefix
+    path: /trading-strategy-analysis
+  - name: optionsviz-dev-service
+    port: 80
+    pathType: Prefix
+    path: /optionviz
