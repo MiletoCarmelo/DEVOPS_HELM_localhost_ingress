@@ -47,9 +47,9 @@ spec:
                   name: tailscale-ip-hostname
                   key: TS_IPHOSTNAME
             - name: TS_EXTRA_ARGS
-              value: "--accept-dns=false --advertise-routes=192.168.68.0/24"
-            - name: TS_SERVE_CONFIG
-              value: "http://192.168.68.6:80"
+              value: "--accept-dns=false --accept-routes=true --advertise-routes=192.168.68.0/24"
+            - name: TS_ROUTES
+              value: "192.168.68.0/24"
           securityContext:
             capabilities:
               add:
