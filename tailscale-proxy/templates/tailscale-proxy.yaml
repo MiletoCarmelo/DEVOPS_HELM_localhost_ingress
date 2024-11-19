@@ -23,7 +23,7 @@ spec:
               tailscaled --state=mem: --tun=userspace-networking &
               sleep 5
               tailscale up --authkey="${TS_AUTHKEY}" --hostname="${TS_HOSTNAME}"
-              tailscale funnel http 80
+              tailscale funnel --bg 80
               sleep infinity
           env:
             - name: TS_HOSTNAME
