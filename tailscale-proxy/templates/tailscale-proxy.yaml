@@ -22,28 +22,28 @@ spec:
             - name: TS_AUTHKEY
               valueFrom:
                 secretKeyRef:
-                  name: tailscale-auth
+                  name: ts-authkey
                   key: TS_AUTHKEY
 
             - name: TS_USERSPACE
               value: "false"
 
-            - name: TS_dest_IP
+            - name: TS_DEST_IP
               valueFrom:
                 secretKeyRef:
-                  name: tailscale-ip-ingress
-                  key: TS_IPINGRESS
+                  name: ts-dest-ip
+                  key: TS_DEST_IP
             
             - name: TS_ROUTES
               valueFrom:
                 secretKeyRef:
-                  name: tailscale-routes
+                  name: ts-routes
                   key: TS_ROUTES
 
             - name: TS_HOSTNAME
               valueFrom:
                 secretKeyRef:
-                  name: tailscale-ip-hostname
+                  name: ts-hostname
                   key: TS_IPHOSTNAME                  
 
           securityContext:
