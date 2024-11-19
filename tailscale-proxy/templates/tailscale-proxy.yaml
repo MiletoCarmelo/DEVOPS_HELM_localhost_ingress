@@ -58,12 +58,10 @@ spec:
           command:
             - "/bin/sh"
             - "-c"  
-            - " tailscaled    --state=kube:tailscale-auth \
+            - " tailscaled    --state=kube:ts-secrets \
                               --socket=/tmp/tailscaled.sock \
                               & sleep 5
-                tailscale up  --operator=$(whoami) \
-                              --accept-dns=false \
-                              --auth-key=${TS_AUTHKEY} \
+                tailscale up  --auth-key=${TS_AUTHKEY} \
                               --hostname="${TS_HOSTNAME}" \
                               --accept-routes \
                               --advertise-routes=${TS_ROUTES}"
