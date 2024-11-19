@@ -14,14 +14,6 @@ spec:
         app: tailscale-proxy
     spec:
       serviceAccountName: tailscale
-      dnsPolicy: "None"
-      dnsConfig:
-        nameservers:
-          - 10.43.0.10
-        searches:
-          - default.svc.cluster.local
-          - svc.cluster.local
-          - cluster.local
       containers:
         - name: tailscale
           image: ghcr.io/tailscale/tailscale:latest
@@ -31,7 +23,8 @@ spec:
               tailscaled --state=mem: --tun=userspace-networking &
               sleep 5
               tailscale up --authkey="${TS_AUTHKEY}" --hostname="${TS_HOSTNAME}"
-              tailscale serve --bg http://${TS_DEST_IP}:80
+              socat TCP-LISTEN:80,fork TCP:${TS_DEST_IP}:80 &
+              tailscale serve --bg http://127.0.0.1:80
               sleep infinity
           env:
             - name: TS_HOSTNAME
@@ -50,6 +43,4 @@ spec:
                   name: ts-secrets
                   key: TS_DEST_IP
           securityContext:
-            capabilities:
-              add:
-                - NET_ADMIN
+            privileged: true
