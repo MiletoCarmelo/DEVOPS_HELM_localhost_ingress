@@ -55,4 +55,4 @@ spec:
           command:
             - "/bin/sh"
             - "-c"
-            - "tailscale up --accept-dns=false --auth-key=$TS_AUTHKEY --accept-routes --advertise-routes=192.168.68.0/24"
+            - "tailscale up --accept-dns=false --auth-key=${TS_AUTHKEY} --accept-routes --advertise-routes=${TS_ROUTES}"
