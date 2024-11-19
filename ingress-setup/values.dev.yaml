@@ -11,7 +11,8 @@ ingress:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
     # Important: on ajoute cette annotation pour gérer les slashs
     nginx.ingress.kubernetes.io/trailing-slash: 'true'
-    # nginx.ingress.kubernetes.io/rewrite-target: /
+    # Important: on ajoute cette annotation pour gérer l'ingress à la racine dans les apps
+    nginx.ingress.kubernetes.io/rewrite-target: /
     # nginx.ingress.kubernetes.io/use-regex: "true"
     # nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
     # tailscale.com/expose: "true"
