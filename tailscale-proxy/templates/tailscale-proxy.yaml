@@ -48,7 +48,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: ts-secrets
-                  key: TS_HOSTNAME                  
+                  key: TS_HOSTNAME
           securityContext:
             capabilities:
               add:
@@ -57,13 +57,9 @@ spec:
             - "/bin/sh"
             - "-c"  
             - |
-              tailscaled    --state=kube:ts-secrets \
-                            --socket=/tmp/tailscaled.sock & 
+              tailscaled --state=kube:ts-secrets --socket=/tmp/tailscaled.sock &
               sleep 5
-              tailscale up  --auth-key=${TS_AUTHKEY} \
-                            --hostname="${TS_HOSTNAME}" \
-                            --accept-routes \
-                            --advertise-routes=${TS_ROUTES}"
+              tailscale up --auth-key=${TS_AUTHKEY} --hostname="${TS_HOSTNAME}" --accept-routes --advertise-routes=${TS_ROUTES}
               tailscale serve --bg http://${TS_DEST_IP}:80
               sleep infinity
           volumeMounts:
@@ -71,4 +67,3 @@ spec:
               mountPath: /dev/net/tun
             - name: tailscaled-socket
               mountPath: /tmp
-              
