@@ -14,30 +14,12 @@ spec:
         app: tailscale-proxy
     spec:
       serviceAccountName: tailscale
-      initContainers:
-        - name: sysctler
-          image: busybox:latest
-          securityContext:
-            privileged: true
-          command: ["/bin/sh"]
-          args:
-            - -c
-            - sysctl -w net.ipv4.ip_forward=1 net.ipv6.conf.all.forwarding=1
       containers:
         - name: tailscale
           image: ghcr.io/tailscale/tailscale:latest
-          imagePullPolicy: Always
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              tailscaled --state=kube:tailscale-auth --socket=/tmp/tailscaled.sock &
-              sleep 5
-              tailscale up --authkey=$(cat /etc/tailscale/auth.key) --accept-routes --advertise-routes=192.168.68.0/24
-              tailscale serve --bg http://192.168.68.6:80
-              sleep infinity
           env:
-            - name: TS_KUBE_SECRET
-              value: tailscale-auth
+            - name: TS_USERSPACE
+              value: "true"
             - name: TS_AUTHKEY
               valueFrom:
                 secretKeyRef:
@@ -48,21 +30,30 @@ spec:
                 secretKeyRef:
                   name: tailscale-ip-ingress
                   key: TS_IPINGRESS
-          volumeMounts:
-            - name: tailscale-auth
-              mountPath: /etc/tailscale
-              readOnly: true
+            - name: TS_EXTRA_ARGS
+              value: "--accept-routes=true --advertise-routes=192.168.68.0/24"
+            - name: TS_SOCKET
+              value: "/tmp/tailscaled.sock"
+            - name: TS_STATE_DIR
+              value: "/tmp"
           securityContext:
+            runAsUser: 1000
+            runAsGroup: 1000
             capabilities:
               add:
                 - NET_ADMIN
+          command:
+            - /bin/sh
+            - -c
+            - |
+              /usr/local/bin/tailscaled --tun=userspace-networking --socks5-server=localhost:1055 &
+              sleep 5
+              /usr/local/bin/tailscale up --authkey="${TS_AUTHKEY}" $TS_EXTRA_ARGS
+              /usr/local/bin/tailscale serve --bg http://192.168.68.6:80
+              sleep infinity
           livenessProbe:
             httpGet:
               path: /health
               port: 41641
             initialDelaySeconds: 30
             periodSeconds: 60
-      volumes:
-        - name: tailscale-auth
-          secret:
-            secretName: tailscale-auth
