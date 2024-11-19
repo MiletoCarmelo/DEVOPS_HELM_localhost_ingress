@@ -15,8 +15,15 @@ spec:
     spec:
       serviceAccountName: tailscale
       initContainers:
-        - name: init-tailscale
+        -  name: init-tailscale
           image: busybox
+          resources:
+            limits:
+              memory: "64Mi"
+              cpu: "100m"
+            requests:
+              memory: "32Mi"
+              cpu: "50m"
           command:
             - /bin/sh
             - -c
