@@ -16,8 +16,21 @@ spec:
       hosts:
         - {{ $.Values.baseDomain }}
   rules:
+    # Règle spécifique pour le domaine
     - host: {{ $.Values.baseDomain }}
       http:
+        paths:
+          {{- range .Values.services }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ .name }}
+                port:
+                  number: {{ .port }}
+          {{- end }}
+    # Règle catch-all pour l'accès direct par IP
+    - http:
         paths:
           {{- range .Values.services }}
           - path: {{ .path }}
