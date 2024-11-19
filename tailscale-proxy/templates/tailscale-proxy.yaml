@@ -22,7 +22,7 @@ spec:
             - |
               tailscaled --state=mem: --tun=userspace-networking &
               sleep 5
-              tailscale up --authkey="${TS_AUTHKEY}" --hostname="${TS_HOSTNAME}"
+              tailscale up --authkey="${TS_AUTHKEY}" --hostname="${TS_HOSTNAME}"  --advertise-routes="${TS_ROUTES}"
               tailscale serve funnel 80
               sleep infinity 
           env:
@@ -36,6 +36,11 @@ spec:
                 secretKeyRef:
                   name: ts-secrets
                   key: TS_AUTHKEY
+            - name: TS_ROUTES
+              valueFrom:
+                secretKeyRef:
+                  name: ts-secrets
+                  key: TS_ROUTES
           securityContext:
             capabilities:
               add:
