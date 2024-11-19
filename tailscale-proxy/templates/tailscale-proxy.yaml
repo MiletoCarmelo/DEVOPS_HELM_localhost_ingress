@@ -14,47 +14,41 @@ spec:
         app: tailscale-proxy
     spec:
       serviceAccountName: tailscale
+      volumes:
+        - name: tailscaled-socket
+          emptyDir: {}
       containers:
         - name: tailscale
           image: ghcr.io/tailscale/tailscale:latest
           env:
-
             - name: TS_KUBE_SECRET
               value: ts-secrets
-
             - name: TS_AUTHKEY
               valueFrom:
                 secretKeyRef:
                   name: ts-secrets
                   key: TS_AUTHKEY
-
             - name: TS_USERSPACE
               value: "false"
-
             - name: TS_DEST_IP
               valueFrom:
                 secretKeyRef:
                   name: ts-secrets
                   key: TS_DEST_IP
-            
             - name: TS_ROUTES
               valueFrom:
                 secretKeyRef:
                   name: ts-secrets
                   key: TS_ROUTES
-
             - name: TS_HOSTNAME
               valueFrom:
                 secretKeyRef:
                   name: ts-secrets
                   key: TS_HOSTNAME                  
-
           securityContext:
             capabilities:
               add:
                 - NET_ADMIN
-
-
           command:
             - "/bin/sh"
             - "-c"  
@@ -68,3 +62,6 @@ spec:
                             --advertise-routes=${TS_ROUTES}"
               tailscale serve --bg http://${TS_DEST_IP}:80
               sleep infinity
+          volumeMounts:
+            - mountPath: /tmp
+              name: tailscaled-socket
