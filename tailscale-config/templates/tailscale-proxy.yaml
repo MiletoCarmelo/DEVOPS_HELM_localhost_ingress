@@ -5,12 +5,12 @@ metadata:
 spec:
   replicas: 1
   selector:
-      matchLabels:
+    matchLabels:
+      app: tailscale-proxy
+  template:
+    metadata:
+      labels:
         app: tailscale-proxy
-    template:
-      metadata:
-        labels:
-          app: tailscale-proxy
     spec:    
       hostNetwork: true  # Ajout pour l'accès réseau complet
       serviceAccountName: tailscale
@@ -23,25 +23,25 @@ spec:
           args:
             - -c
             - sysctl -w net.ipv4.ip_forward=1 net.ipv6.conf.all.forwarding=1
-  containers:
-    - name: tailscale
-      image: ghcr.io/tailscale/tailscale:latest
-      env:
-        - name: TS_KUBE_SECRET
-          value: tailscale-auth
-        - name: TS_USERSPACE
-          value: "false"
-        - name: TS_AUTHKEY
-            valueFrom:
-              secretKeyRef:
-                name: tailscale-auth
-                key: TS_AUTHKEY
-        - name: TS_DEST_IP
-          valueFrom:
-            secretKeyRef:
-              name: tailscale-ip-ingress
-              key: TS_IPINGRESS
-      securityContext:
-        capabilities:
-           add:
-            - NET_ADMIN
+      containers:
+        - name: tailscale
+          image: ghcr.io/tailscale/tailscale:latest
+          env:
+            - name: TS_KUBE_SECRET
+              value: tailscale-auth
+            - name: TS_USERSPACE
+              value: "false"
+            - name: TS_AUTHKEY
+              valueFrom:
+                secretKeyRef:
+                  name: tailscale-auth
+                  key: TS_AUTHKEY
+            - name: TS_DEST_IP
+              valueFrom:
+                secretKeyRef:
+                  name: tailscale-ip-ingress
+                  key: TS_IPINGRESS
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
