@@ -1,4 +1,4 @@
-apiVersion: v1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: tailscale-proxy
@@ -12,7 +12,7 @@ spec:
     metadata:
       labels:
         app: tailscale-proxy
-    spec:    
+    spec:
       hostNetwork: true  # Ajout pour l'accès réseau complet
       serviceAccountName: tailscale
       initContainers:
