@@ -3,7 +3,7 @@ environment: dev
 baseDomain: cquant-desktop.tailc6fb0e.ts.net
 tls:
   issuer: selfsigned
-  enabled: true # si true: l'ingress tente de générer en https 
+  enabled: false # si true: l'ingress tente de générer en https 
 ingress:
   className: nginx
   annotations:
