@@ -14,13 +14,23 @@ spec:
         app: tailscale-proxy
     spec:
       serviceAccountName: tailscale
+      dnsPolicy: ClusterFirst
+      dnsConfig:
+        nameservers:
+          - 8.8.8.8
+        searches:
+          - tailscale.svc.cluster.local
+          - svc.cluster.local
+          - cluster.local
       initContainers:
         - name: install-socat
-          image: alpine:latest
-          command:
-            - /bin/sh
-            - -c
-            - apk add --no-cache socat && cp $(which socat) /tools/
+          image: debian:bullseye-slim
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              apt-get update && apt-get install -y socat
+              cp $(which socat) /tools/
+              ldd $(which socat) | grep readline | cut -d ' ' -f 3 | xargs -I {} cp {} /tools/
           volumeMounts:
             - name: tools
               mountPath: /tools
@@ -30,13 +40,15 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              cp /tools/socat /usr/local/bin/ && chmod +x /usr/local/bin/socat
+              cp /tools/* /usr/local/lib/
+              cp /tools/socat /usr/local/bin/
+              ldconfig
               tailscaled --state=kube:ts-secrets &
               sleep 5
               tailscale up --reset \
-                --advertise-routes=${TS_ROUTES} \
-                --auth-key=${TS_AUTHKEY} \
-                --hostname=${TS_HOSTNAME}
+                --hostname="${TS_HOSTNAME}" \
+                --auth-key="${TS_AUTHKEY}" \
+                --advertise-routes="${TS_ROUTES}"
               socat TCP4-LISTEN:80,reuseaddr,fork TCP4:${TS_DEST_IP}:80 &
               tailscale serve --bg http://127.0.0.1:80
               sleep infinity
@@ -62,21 +74,13 @@ spec:
                   name: ts-secrets
                   key: TS_ROUTES
           volumeMounts:
-            - name: dev-net-tun
-              mountPath: /dev/net/tun
             - name: tools
               mountPath: /tools
             - name: tailscale-state
               mountPath: /var/lib/tailscale
           securityContext:
-            capabilities:
-              add:
-                - NET_ADMIN
+            privileged: true
       volumes:
-        - name: dev-net-tun
-          hostPath:
-            path: /dev/net/tun
-            type: CharDevice
         - name: tools
           emptyDir: {}
         - name: tailscale-state
