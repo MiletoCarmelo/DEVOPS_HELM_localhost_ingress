@@ -21,8 +21,12 @@ spec:
             - /bin/sh
             - -c
             - |
+              echo "Creating /var/lib/tailscale"
               mkdir -p /var/lib/tailscale
+              echo "Setting permissions"
               chown -R tailscale:tailscale /var/lib/tailscale
+              echo "Init completed successfully"
+              sleep 600  # Garde le container vivant pour le débogage
         - name: init-iptables
           image: busybox
           command:
