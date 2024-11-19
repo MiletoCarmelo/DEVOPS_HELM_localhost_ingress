@@ -16,18 +16,6 @@ spec:
       hosts:
         - {{ $.Values.baseDomain }}
   rules:
-  - host: {{ $.Values.baseDomain }}
-    http:
-      paths:
-      {{- range .Values.services }}
-      - path: {{ .path }}
-        pathType: {{ .pathType }}
-        backend:
-          service:
-            name: {{ .name }}
-            port:
-              number: {{ .port }}
-      {{- end }}
   - http:
       paths:
       {{- range .Values.services }}
