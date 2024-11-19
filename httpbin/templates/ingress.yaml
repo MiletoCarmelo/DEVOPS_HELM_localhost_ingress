@@ -7,7 +7,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-    - host: 192.168.68.6  # IP de ton service ou ton domaine
+    - host: cquant-desktop.tailc6fb0e.ts.net
       http:
         paths:
         - path: /
