@@ -40,6 +40,7 @@ kubectl create secret generic ts-secrets \
 #   --set-string ts.oauth.clientId=${TAILSCALE_OAUTH_CLIENT_ID} \
 #   --set-string ts.oauth.clientSecret=${TAILSCALE_OAUTH_CLIENT_SECRET} 
 
+echo "🔒 Création du secret operator-oauth .."
 kubectl create secret generic operator-oauth \
   --namespace=${NAMESPACE} \
   --from-literal=TS_CLIENT_ID=${TS_CLIENT_ID} \
