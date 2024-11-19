@@ -12,20 +12,25 @@ ingress:
     tailscale.com/https: "true"  # Gestionnaire HTTPS natif de Tailscale
     tailscale.com/funnel: "true"  # Activation de Tailscale Funnel
     kubernetes.io/ingress.class: nginx  # Ajout explicite de la classe
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/use-regex: "true"
-    nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/ssl-redirect: "false" # redirection automatique des requêtes HTTP vers HTTPS.
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false" # Semblable à ssl-redirect, mais plus explicite pour forcer ou non la redirection vers HTTPS. garder false ten quon utilise pas https exclusivement
+    # si on na pas de sous-chemins alors commenter ces deux lignes du bas : 
+    # nginx.ingress.kubernetes.io/use-regex: "true" # Permet l'utilisation d'expressions régulières dans les chemins spécifiés dans l'Ingress.
+    # nginx.ingress.kubernetes.io/rewrite-target: /$1
 services:
-  - path: /success/?(.*)
+  - path: /
     pathType: Prefix
     name: success-app-dev-service
     port: 80
-  - path: /trading-strategy-analysis/?(.*)
-    pathType: Prefix
-    name: tsa-dev-service
-    port: 80
-  - path: /optionviz/?(.*)
-    pathType: Prefix
-    name: optionsviz-dev-service
-    port: 80
+  # - path: /success/?(.*)
+  #   pathType: Prefix
+  #   name: success-app-dev-service
+  #   port: 80
+  # - path: /trading-strategy-analysis/?(.*)
+  #   pathType: Prefix
+  #   name: tsa-dev-service
+  #   port: 80
+  # - path: /optionviz/?(.*)
+  #   pathType: Prefix
+  #   name: optionsviz-dev-service
+  #   port: 80
