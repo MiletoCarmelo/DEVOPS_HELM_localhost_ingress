@@ -7,7 +7,8 @@ tls:
 ingress:
   className: nginx
   annotations:
-    tailscale.com/expose: "true"
+    tailscale.com/expose: "true" # Annotation officielle Tailscale pour exposer les services
+    tailscale.com/https: "true"  # Gestionnaire HTTPS natif de Tailscale
     kubernetes.io/ingress.class: nginx  # Ajout explicite de la classe
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
