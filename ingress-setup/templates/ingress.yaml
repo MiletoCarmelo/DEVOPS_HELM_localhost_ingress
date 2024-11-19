@@ -16,16 +16,15 @@ spec:
       hosts:
         - {{ $.Values.baseDomain }}
   rules:
-    - http:
+    - host: {{ $.Values.baseDomain }}
+      http:
         paths:
-        {{- with .Values.services }}
-        {{- range . }}
-        - backend:
-            service:
-              name: {{ .name }}
-              port:
-                number: {{ .port }}
-          path: {{ .path }}
-          pathType: {{ .pathType }}
-        {{- end }}
+        {{- range .Values.services }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ .name }}
+                port:
+                  number: {{ .port }}
         {{- end }}
