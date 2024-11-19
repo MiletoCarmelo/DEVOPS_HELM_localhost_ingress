@@ -23,8 +23,7 @@ spec:
               tailscaled --state=mem: --tun=userspace-networking &
               sleep 5
               tailscale up --authkey="${TS_AUTHKEY}" --hostname="${TS_HOSTNAME}"
-              socat TCP-LISTEN:80,fork TCP:${TS_DEST_IP}:80 &
-              tailscale serve --bg http://127.0.0.1:80
+              tailscale funnel --bg 80 on
               sleep infinity
           env:
             - name: TS_HOSTNAME
@@ -37,10 +36,7 @@ spec:
                 secretKeyRef:
                   name: ts-secrets
                   key: TS_AUTHKEY
-            - name: TS_DEST_IP
-              valueFrom:
-                secretKeyRef:
-                  name: ts-secrets
-                  key: TS_DEST_IP
           securityContext:
-            privileged: true
+            capabilities:
+              add:
+                - NET_ADMIN
