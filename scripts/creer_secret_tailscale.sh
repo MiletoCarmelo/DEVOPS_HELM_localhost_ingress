@@ -43,6 +43,6 @@ kubectl create secret generic ts-secrets \
 echo "🔒 Création du secret operator-oauth .."
 kubectl create secret generic operator-oauth \
   --namespace=${NAMESPACE} \
-  --from-literal=TS_CLIENT_ID=${TS_CLIENT_ID} \
-  --from-literal=TS_CLIENT_SECRET=${TS_CLIENT_SECRET} \
+  --from-literal=client_id=${TS_CLIENT_ID} \
+  --from-literal=client_secret=${TS_CLIENT_SECRET} \
   --dry-run=client -o yaml | kubectl apply -f -
