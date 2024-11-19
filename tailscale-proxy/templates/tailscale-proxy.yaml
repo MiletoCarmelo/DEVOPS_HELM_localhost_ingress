@@ -60,11 +60,12 @@ spec:
             - "-c"  
             - " tailscaled    --state=kube:tailscale-auth \
                               --socket=/tmp/tailscaled.sock \
-                              &
-                sleep 5
+                              & sleep 5
                 tailscale up  --operator=$(whoami) \
                               --accept-dns=false \
                               --auth-key=${TS_AUTHKEY} \
                               --hostname="${TS_HOSTNAME}" \
                               --accept-routes \
                               --advertise-routes=${TS_ROUTES}"
+                tailscale serve --bg http://${TS_DEST_IP}:80
+                sleep infinity
