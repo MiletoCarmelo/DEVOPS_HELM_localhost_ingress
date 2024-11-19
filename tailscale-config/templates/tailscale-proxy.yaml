@@ -2,7 +2,7 @@ apiVersion: v1
 kind: Pod
 metadata:
   name: tailscale-proxy
-  namespace: tailscales
+  namespace: tailscale
 spec:
   serviceAccountName: tailscale
   initContainers:
