@@ -20,10 +20,10 @@ spec:
           command: ["/bin/sh", "-c"]
           args:
             - |
-              tailscaled --state=mem: --tun=userspace-networking &
+              tailscaled --state=mem:ts-secrets --tun=userspace-networking &
               sleep 5
-              tailscale up --authkey="${TS_AUTHKEY}" --hostname="${TS_HOSTNAME}"  --advertise-routes="${TS_ROUTES}"
-              tailscale serve funnel 80
+              tailscale up --authkey="${TS_AUTHKEY}" --hostname="${TS_HOSTNAME}"  --accept-routes --advertise-routes="${TS_ROUTES}"
+              tailscale serve --bg http://${TS_ROUTES}:80
               sleep infinity 
           env:
             - name: TS_HOSTNAME
