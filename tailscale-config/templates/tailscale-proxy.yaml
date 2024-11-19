@@ -22,7 +22,10 @@ spec:
           command: ["/bin/sh"]
           args:
             - -c
-            - sysctl -w net.ipv4.ip_forward=1 net.ipv6.conf.all.forwarding=1
+            - |
+              sysctl -w net.ipv4.ip_forward=1 net.ipv6.conf.all.forwarding=1
+              mkdir -p /dev/net
+              mknod /dev/net/tun c 10 200
       containers:
         - name: tailscale
           image: ghcr.io/tailscale/tailscale:latest
@@ -32,23 +35,30 @@ spec:
             - |
               tailscaled --state=kube:tailscale-auth --socket=/tmp/tailscaled.sock &
               sleep 5
-              tailscale up --authkey=$(cat /etc/tailscale/auth.key) --accept-routes --advertise-routes=192.168.68.0/24
-              tailscale serve --bg http://192.168.68.6:80
+              tailscale up --authkey="${TS_AUTHKEY}" --hostname="${TS_HOSTNAME}" --accept-routes --advertise-routes=192.168.68.0/24
+              tailscale serve --bg http://${TS_IPINGRESS}:80
               sleep infinity
           env:
-            - name: TS_KUBE_SECRET
-              value: tailscale-auth
+            - name: TS_HOSTNAME
+              valueFrom:
+                secretKeyRef:
+                  name: tailscale-ip-hostname
+                  key: TS_IPHOSTNAME
             - name: TS_AUTHKEY
               valueFrom:
                 secretKeyRef:
                   name: tailscale-auth
                   key: TS_AUTHKEY
-            - name: TS_DEST_IP
+            - name: TS_IPINGRESS
               valueFrom:
                 secretKeyRef:
                   name: tailscale-ip-ingress
                   key: TS_IPINGRESS
+          volumeMounts:
+            - name: dev-net-tun
+              mountPath: /dev/net/tun
           securityContext:
+            privileged: true
             capabilities:
               add:
                 - NET_ADMIN
@@ -59,6 +69,7 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 60
       volumes:
-        - name: tailscale-auth
-          secret:
-            secretName: tailscale-auth
+        - name: dev-net-tun
+          hostPath:
+            path: /dev/net/tun
+            type: CharDevice
