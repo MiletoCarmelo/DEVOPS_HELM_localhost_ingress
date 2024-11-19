@@ -19,6 +19,7 @@ spec:
     - host: {{ $.Values.baseDomain }}
       http:
         paths:
+        {{- if .Values.services }}
         {{- range .Values.services }}
           - path: {{ .path }}
             pathType: {{ .pathType }}
@@ -27,4 +28,5 @@ spec:
                 name: {{ .name }}
                 port:
                   number: {{ .port }}
+        {{- end }}
         {{- end }}
