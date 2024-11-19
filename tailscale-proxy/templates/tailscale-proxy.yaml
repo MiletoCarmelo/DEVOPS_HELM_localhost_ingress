@@ -14,43 +14,25 @@ spec:
         app: tailscale-proxy
     spec:
       serviceAccountName: tailscale
-      dnsPolicy: ClusterFirst
+      dnsPolicy: "None"
       dnsConfig:
         nameservers:
-          - 8.8.8.8
+          - 10.43.0.10
         searches:
           - tailscale.svc.cluster.local
           - svc.cluster.local
           - cluster.local
-      initContainers:
-        - name: install-socat
-          image: debian:bullseye-slim
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              apt-get update && apt-get install -y socat
-              cp $(which socat) /tools/
-              ldd $(which socat) | grep readline | cut -d ' ' -f 3 | xargs -I {} cp {} /tools/
-          volumeMounts:
-            - name: tools
-              mountPath: /tools
       containers:
         - name: tailscale
           image: ghcr.io/tailscale/tailscale:latest
           command: ["/bin/sh", "-c"]
           args:
             - |
-              cp /tools/* /usr/local/lib/
-              cp /tools/socat /usr/local/bin/
-              ldconfig
-              tailscaled --state=kube:ts-secrets &
+              tailscaled --state=mem: --tun=userspace-networking &
               sleep 5
-              tailscale up --reset \
-                --hostname="${TS_HOSTNAME}" \
-                --auth-key="${TS_AUTHKEY}" \
-                --advertise-routes="${TS_ROUTES}"
-              socat TCP4-LISTEN:80,reuseaddr,fork TCP4:${TS_DEST_IP}:80 &
-              tailscale serve --bg http://127.0.0.1:80
+              tailscale up --authkey="${TS_AUTHKEY}" --hostname="${TS_HOSTNAME}"
+              tailscale serve --bg --http-handler=proxy http://localhost:8080/
+              nc -l -p 8080 -e sh -c 'echo -e "HTTP/1.1 200 OK\n\nHello"'
               sleep infinity
           env:
             - name: TS_HOSTNAME
@@ -63,25 +45,13 @@ spec:
                 secretKeyRef:
                   name: ts-secrets
                   key: TS_AUTHKEY
-            - name: TS_DEST_IP
-              valueFrom:
-                secretKeyRef:
-                  name: ts-secrets
-                  key: TS_DEST_IP
-            - name: TS_ROUTES
-              valueFrom:
-                secretKeyRef:
-                  name: ts-secrets
-                  key: TS_ROUTES
-          volumeMounts:
-            - name: tools
-              mountPath: /tools
-            - name: tailscale-state
-              mountPath: /var/lib/tailscale
           securityContext:
-            privileged: true
-      volumes:
-        - name: tools
-          emptyDir: {}
-        - name: tailscale-state
-          emptyDir: {}
+            capabilities:
+              add:
+                - NET_ADMIN
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 41641
+            initialDelaySeconds: 60
+            periodSeconds: 60
