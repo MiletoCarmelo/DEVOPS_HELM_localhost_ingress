@@ -15,7 +15,7 @@ spec:
     spec:
       serviceAccountName: tailscale
       initContainers:
-        -  name: init-tailscale
+        - name: init-tailscale
           image: busybox
           resources:
             limits:
