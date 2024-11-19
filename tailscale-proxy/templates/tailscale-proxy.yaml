@@ -58,12 +58,13 @@ spec:
           command:
             - "/bin/sh"
             - "-c"  
-            - " tailscaled    --state=kube:ts-secrets \
-                              --socket=/tmp/tailscaled.sock \
-                              & sleep 5
-                tailscale up  --auth-key=${TS_AUTHKEY} \
-                              --hostname="${TS_HOSTNAME}" \
-                              --accept-routes \
-                              --advertise-routes=${TS_ROUTES}"
-                tailscale serve --bg http://${TS_DEST_IP}:80
-                sleep infinity
+            - |
+              tailscaled    --state=kube:ts-secrets \
+                            --socket=/tmp/tailscaled.sock & 
+              sleep 5
+              tailscale up  --auth-key=${TS_AUTHKEY} \
+                            --hostname="${TS_HOSTNAME}" \
+                            --accept-routes \
+                            --advertise-routes=${TS_ROUTES}"
+              tailscale serve --bg http://${TS_DEST_IP}:80
+              sleep infinity
