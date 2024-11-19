@@ -26,6 +26,15 @@ spec:
       containers:
         - name: tailscale
           image: ghcr.io/tailscale/tailscale:latest
+          imagePullPolicy: Always
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              tailscaled --state=kube:tailscale-auth --socket=/tmp/tailscaled.sock &
+              sleep 5
+              tailscale up --authkey=$(cat /etc/tailscale/auth.key) --accept-routes --advertise-routes=192.168.68.0/24
+              tailscale serve --bg http://192.168.68.6:80
+              sleep infinity
           env:
             - name: TS_KUBE_SECRET
               value: tailscale-auth
@@ -34,24 +43,15 @@ spec:
                 secretKeyRef:
                   name: tailscale-auth
                   key: TS_AUTHKEY
-            - name: TS_USERSPACE
-              value: "false"
             - name: TS_DEST_IP
               valueFrom:
                 secretKeyRef:
                   name: tailscale-ip-ingress
                   key: TS_IPINGRESS
-            - name: TS_HOSTNAME
-              valueFrom:
-                secretKeyRef:
-                  name: tailscale-ip-hostname
-                  key: TS_IPHOSTNAME
-            - name: TS_EXTRA_ARGS
-              value: "--accept-routes=true --advertise-routes=192.168.68.0/24 --accept-dns=false"
-            - name: TS_SERVE_CONFIG
-              value: "http://192.168.68.6:80"
-            - name: TS_SERVE_PORT
-              value: "80"
+          volumeMounts:
+            - name: tailscale-auth
+              mountPath: /etc/tailscale
+              readOnly: true
           securityContext:
             capabilities:
               add:
@@ -62,12 +62,7 @@ spec:
               port: 41641
             initialDelaySeconds: 30
             periodSeconds: 60
-          # Ajouter une commande pour démarrer le service HTTP
-          lifecycle:
-            postStart:
-              exec:
-                command:
-                  - /bin/sh
-                  - -c
-                  - |
-                    sleep 10 && tailscale serve --bg http://192.168.68.6:80
+      volumes:
+        - name: tailscale-auth
+          secret:
+            secretName: tailscale-auth
