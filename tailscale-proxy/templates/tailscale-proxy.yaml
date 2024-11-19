@@ -14,30 +14,43 @@ spec:
         app: tailscale-proxy
     spec:
       serviceAccountName: tailscale
-      volumes:
-        - name: dev-net-tun
-          hostPath:
-            path: /dev/net/tun
-            type: CharDevice
-        - name: tailscale-state
-          emptyDir: {}  # Ajout du volume pour le state
+      initContainers:
+        - name: install-socat
+          image: alpine:latest
+          command:
+            - /bin/sh
+            - -c
+            - apk add --no-cache socat && cp $(which socat) /tools/
+          volumeMounts:
+            - name: tools
+              mountPath: /tools
       containers:
         - name: tailscale
           image: ghcr.io/tailscale/tailscale:latest
           command: ["/bin/sh", "-c"]
           args:
             - |
-              apt-get update && apt-get install -y socat
+              cp /tools/socat /usr/local/bin/ && chmod +x /usr/local/bin/socat
+              tailscaled --state=kube:ts-secrets &
+              sleep 5
+              tailscale up --reset \
+                --advertise-routes=${TS_ROUTES} \
+                --auth-key=${TS_AUTHKEY} \
+                --hostname=${TS_HOSTNAME}
+              socat TCP4-LISTEN:80,reuseaddr,fork TCP4:${TS_DEST_IP}:80 &
+              tailscale serve --bg http://127.0.0.1:80
+              sleep infinity
           env:
-            - name: TS_KUBE_SECRET
-              value: ts-secrets
+            - name: TS_HOSTNAME
+              valueFrom:
+                secretKeyRef:
+                  name: ts-secrets
+                  key: TS_HOSTNAME
             - name: TS_AUTHKEY
               valueFrom:
                 secretKeyRef:
                   name: ts-secrets
                   key: TS_AUTHKEY
-            - name: TS_USERSPACE
-              value: "false"
             - name: TS_DEST_IP
               valueFrom:
                 secretKeyRef:
@@ -48,27 +61,23 @@ spec:
                 secretKeyRef:
                   name: ts-secrets
                   key: TS_ROUTES
-            - name: TS_HOSTNAME
-              valueFrom:
-                secretKeyRef:
-                  name: ts-secrets
-                  key: TS_HOSTNAME
+          volumeMounts:
+            - name: dev-net-tun
+              mountPath: /dev/net/tun
+            - name: tools
+              mountPath: /tools
+            - name: tailscale-state
+              mountPath: /var/lib/tailscale
           securityContext:
             capabilities:
               add:
                 - NET_ADMIN
-          command:
-            - "/bin/sh"
-            - "-c"  
-            - |
-              tailscaled --state=kube:ts-secrets &
-              sleep 5
-              tailscale up --auth-key=${TS_AUTHKEY} --hostname="${TS_HOSTNAME}" --advertise-routes=${TS_ROUTES}
-              tailscale serve --bg http://127.0.0.1:80
-              socat TCP4-LISTEN:80,reuseaddr,fork TCP4:${TS_DEST_IP}:80 &
-              sleep infinity
-          volumeMounts:
-            - name: dev-net-tun
-              mountPath: /dev/net/tun
-            - name: tailscale-state
-              mountPath: /var/lib/tailscale  # Montage du state directory
+      volumes:
+        - name: dev-net-tun
+          hostPath:
+            path: /dev/net/tun
+            type: CharDevice
+        - name: tools
+          emptyDir: {}
+        - name: tailscale-state
+          emptyDir: {}
