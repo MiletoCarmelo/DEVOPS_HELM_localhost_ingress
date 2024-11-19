@@ -28,6 +28,10 @@ spec:
           value: "false"
         - name: TS_DEST_IP
           value: 10.43.6.114
+      command: ["/bin/sh"]
+      args:
+        - -c
+        - "tailscale up --accept-dns=false --auth-key=$TS_AUTHKEY --accept-routes --advertise-routes=192.168.68.0/24"
       securityContext:
         capabilities:
            add:
