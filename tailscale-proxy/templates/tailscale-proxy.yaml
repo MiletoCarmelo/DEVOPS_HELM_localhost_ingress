@@ -19,10 +19,13 @@ spec:
           image: ghcr.io/tailscale/tailscale:latest
           env:
 
+            - name: TS_KUBE_SECRET
+              value: ts-secrets
+
             - name: TS_AUTHKEY
               valueFrom:
                 secretKeyRef:
-                  name: ts-authkey
+                  name: ts-secrets
                   key: TS_AUTHKEY
 
             - name: TS_USERSPACE
@@ -31,19 +34,19 @@ spec:
             - name: TS_DEST_IP
               valueFrom:
                 secretKeyRef:
-                  name: ts-dest-ip
+                  name: ts-secrets
                   key: TS_DEST_IP
             
             - name: TS_ROUTES
               valueFrom:
                 secretKeyRef:
-                  name: ts-routes
+                  name: ts-secrets
                   key: TS_ROUTES
 
             - name: TS_HOSTNAME
               valueFrom:
                 secretKeyRef:
-                  name: ts-hostname
+                  name: ts-secrets
                   key: TS_HOSTNAME                  
 
           securityContext:
@@ -55,4 +58,4 @@ spec:
           command:
             - "/bin/sh"
             - "-c"
-            - "tailscale up --accept-dns=false --auth-key=${TS_AUTHKEY} --accept-routes --advertise-routes=${TS_ROUTES}"
+            - "tailscale up --operator=$(whoami) --accept-dns=false --auth-key=${TS_AUTHKEY} --hostname="${TS_HOSTNAME}" --accept-routes --advertise-routes=${TS_ROUTES}"
