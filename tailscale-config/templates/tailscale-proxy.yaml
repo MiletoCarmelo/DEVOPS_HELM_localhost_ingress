@@ -13,6 +13,7 @@ spec:
       labels:
         app: tailscale-proxy
     spec:
+      serviceAccountName: tailscale
       containers:
         - name: tailscale
           image: ghcr.io/tailscale/tailscale:latest
