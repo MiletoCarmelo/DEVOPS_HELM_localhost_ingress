@@ -13,9 +13,8 @@ NAMESPACE="tailscale"
 # echo
 # echo "🔒 Configuration de Tailscale OAuth"
 
-# OAUTH_CLIENT_ID=$(grep OAUTH_CLIENT_ID .env | cut -d '=' -f2)
-# OAUTH_CLIENT_SECRET=$(grep OAUTH_CLIENT_SECRET .env | cut -d '=' -f2)
-
+TS_CLIENT_ID=$(grep TS_CLIENT_ID .env | cut -d '=' -f2)
+TS_CLIENT_SECRET=$(grep TS_CLIENT_SECRET .env | cut -d '=' -f2)
 TS_AUTHKEY=$(grep TS_AUTHKEY .env | cut -d '=' -f2)
 TS_DEST_IP=$(grep TS_DEST_IP .env | cut -d '=' -f2)
 TS_ROUTES=$(grep TS_ROUTES .env | cut -d '=' -f2)
@@ -29,6 +28,8 @@ kubectl create secret generic ts-secrets \
   --from-literal=TS_DEST_IP=${TS_DEST_IP} \
   --from-literal=TS_ROUTES=${TS_ROUTES} \
   --from-literal=TS_HOSTNAME=${TS_HOSTNAME} \
+  --from-literal=TS_CLIENT_ID=${TS_CLIENT_ID} \
+  --from-literal=TS_CLIENT_SECRET=${TS_CLIENT_SECRET} \
   --dry-run=client -o yaml | kubectl apply -f -
 
 
