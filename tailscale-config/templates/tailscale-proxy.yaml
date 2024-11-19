@@ -41,18 +41,20 @@ spec:
                 secretKeyRef:
                   name: tailscale-ip-ingress
                   key: TS_IPINGRESS
-            - name: TS_HOSTNAME    # Ajoutez ceci
+            - name: TS_HOSTNAME
               valueFrom:
                 secretKeyRef:
                   name: tailscale-ip-hostname
                   key: TS_IPHOSTNAME
             - name: TS_EXTRA_ARGS
-              value: "--accept-dns=false"  # Ajoutez cette ligne
+              value: "--accept-dns=false --advertise-routes=192.168.68.0/24"
+            - name: TS_SERVE_CONFIG
+              value: "http://192.168.68.6:80"
           securityContext:
             capabilities:
               add:
                 - NET_ADMIN
-          livenessProbe:    # Ajoutez cette section
+          livenessProbe:
             httpGet:
               path: /health
               port: 41641
