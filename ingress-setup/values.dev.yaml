@@ -11,6 +11,9 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
     nginx.ingress.kubernetes.io/rewrite-target: /
+    # Ajout pour permettre l'accès par IP
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/default-backend: "true"
 services:
   - name: success-app-dev-service
     port: 80
