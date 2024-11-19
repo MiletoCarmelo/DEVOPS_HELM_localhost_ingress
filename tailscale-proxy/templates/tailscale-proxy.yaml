@@ -17,6 +17,10 @@ spec:
       volumes:
         - name: tailscaled-socket
           emptyDir: {}
+        - name: dev-net-tun
+          hostPath:
+            path: /dev/net/tun
+            type: CharDevice
       containers:
         - name: tailscale
           image: ghcr.io/tailscale/tailscale:latest
@@ -63,5 +67,8 @@ spec:
               tailscale serve --bg http://${TS_DEST_IP}:80
               sleep infinity
           volumeMounts:
-            - mountPath: /tmp
-              name: tailscaled-socket
+            - name: dev-net-tun
+              mountPath: /dev/net/tun
+            - name: tailscaled-socket
+              mountPath: /tmp
+              
