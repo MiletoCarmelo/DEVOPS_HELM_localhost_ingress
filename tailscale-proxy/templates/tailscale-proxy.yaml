@@ -24,7 +24,7 @@ spec:
               sleep 5
               tailscale up --authkey="${TS_AUTHKEY}" --hostname="${TS_HOSTNAME}"
               tailscale serve funnel 80
-              sleep infinity
+              sleep infinity 
           env:
             - name: TS_HOSTNAME
               valueFrom:
