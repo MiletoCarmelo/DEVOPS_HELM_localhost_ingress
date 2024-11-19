@@ -28,8 +28,6 @@ kubectl create secret generic ts-secrets \
   --from-literal=TS_DEST_IP=${TS_DEST_IP} \
   --from-literal=TS_ROUTES=${TS_ROUTES} \
   --from-literal=TS_HOSTNAME=${TS_HOSTNAME} \
-  --from-literal=TS_CLIENT_ID=${TS_CLIENT_ID} \
-  --from-literal=TS_CLIENT_SECRET=${TS_CLIENT_SECRET} \
   --dry-run=client -o yaml | kubectl apply -f -
 
 
@@ -41,3 +39,9 @@ kubectl create secret generic ts-secrets \
 #   --create-namespace \
 #   --set-string ts.oauth.clientId=${TAILSCALE_OAUTH_CLIENT_ID} \
 #   --set-string ts.oauth.clientSecret=${TAILSCALE_OAUTH_CLIENT_SECRET} 
+
+kubectl create secret generic operator-oauth \
+  --namespace=${NAMESPACE} \
+  --from-literal=TS_CLIENT_ID=${TS_CLIENT_ID} \
+  --from-literal=TS_CLIENT_SECRET=${TS_CLIENT_SECRET} \
+  --dry-run=client -o yaml | kubectl apply -f -
