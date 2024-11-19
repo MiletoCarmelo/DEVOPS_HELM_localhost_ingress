@@ -13,7 +13,6 @@ spec:
       labels:
         app: tailscale-proxy
     spec:
-      hostNetwork: true  # Ajout pour l'accès réseau complet
       serviceAccountName: tailscale
       initContainers:
         - name: sysctler
