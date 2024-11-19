@@ -2,3 +2,23 @@ kubectl --namespace dev port-forward service/tsa-dev-service 8078:80
 kubectl --namespace dev port-forward service/optionsviz-dev-service 8077:80
 kubectl --namespace dev port-forward service/success-app-dev-service 8076:80
 
+
+cquant@cquant-desktop:~/k8s/DEVOPS_HELM_localhost_ingress$ kubectl get svc -n dev
+NAME                      TYPE       CLUSTER-IP     EXTERNAL-IP   PORT(S)        AGE
+optionsviz-dev-service    NodePort   10.43.102.88   <none>        80:32292/TCP   2d
+success-app-dev-service   NodePort   10.43.26.43    <none>        80:32158/TCP   33h
+tsa-dev-service           NodePort   10.43.57.90    <none>        80:30645/TCP   14h
+
+cquant@cquant-desktop:~/k8s/DEVOPS_HELM_localhost_ingress$ tailscale status
+100.64.102.47   cquant-desktop       MiletoCarmelo@ linux   -
+100.103.121.77  cquant-desktop-tailc6fb0e-ts-net-1 MiletoCarmelo@ linux   -
+100.66.136.4    cquant-desktop-tailc6fb0e-ts-net MiletoCarmelo@ linux   offline
+100.76.193.14   ipadprocarm          MiletoCarmelo@ iOS     offline
+100.87.1.86     iphone-12-pro-max    MiletoCarmelo@ iOS     offline
+100.110.155.104 mbpdecarmelo2        MiletoCarmelo@ macOS   active; direct 192.168.1.20:41641, tx 34001536 rx 11932960
+
+curl http://100.64.102.47:32292
+curl http://100.64.102.47:32158
+curl http://100.64.102.47:30645
+
+=> en testant sur macbook safari : http://100.64.102.47:32158 sa marche : nœud cquant-desktop est bien connecté à Tailscale avec l'adresse 100.64.102.47.
