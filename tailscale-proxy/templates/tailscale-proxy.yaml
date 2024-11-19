@@ -15,8 +15,6 @@ spec:
     spec:
       serviceAccountName: tailscale
       volumes:
-        - name: tailscaled-socket
-          emptyDir: {}
         - name: dev-net-tun
           hostPath:
             path: /dev/net/tun
@@ -65,5 +63,3 @@ spec:
           volumeMounts:
             - name: dev-net-tun
               mountPath: /dev/net/tun
-            - name: tailscaled-socket
-              mountPath: /tmp
