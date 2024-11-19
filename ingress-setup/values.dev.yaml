@@ -1,6 +1,6 @@
 module: ingress-setup
 environment: dev
-baseDomain: dev.mm.ch
+baseDomain: cquant-desktop.tailc6fb0e.ts.net
 tls:
   issuer: selfsigned
   enabled: true
@@ -11,17 +11,16 @@ ingress:
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
     nginx.ingress.kubernetes.io/rewrite-target: /
-    nginx.ingress.kubernetes.io/use-regex: "true"
-services:
-  - name: success-app-dev-service
-    port: 80
-    pathType: Prefix
-    path: /success
-  - name: tsa-dev-service
-    port: 80
-    pathType: Prefix
-    path: /trading-strategy-analysis
-  - name: optionsviz-dev-service
-    port: 80
-    pathType: Prefix
-    path: /optionviz
+  services:
+    - name: success-app-dev-service
+      port: 80
+      pathType: Prefix
+      path: /success
+    - name: tsa-dev-service
+      port: 80
+      pathType: Prefix
+      path: /trading-strategy-analysis
+    - name: optionsviz-dev-service
+      port: 80
+      pathType: Prefix
+      path: /optionviz
