@@ -1,39 +1,49 @@
-apiVersion: v1
-kind: Pod
+apiVersion: apps/v1
+kind: Deployment
 metadata:
   name: tailscale-proxy
   namespace: tailscale
 spec:
-  serviceAccountName: tailscale
-  initContainers:
-    - name: sysctler
-      image: busybox:latest
-      securityContext:
-        privileged: true
-      command: ["/bin/sh"]
-      args:
-        - -c
-        - sysctl -w net.ipv4.ip_forward=1 net.ipv6.conf.all.forwarding=1
-  containers:
-    - name: tailscale
-      image: ghcr.io/tailscale/tailscale:latest
-      env:
-        - name: TS_KUBE_SECRET
-          value: tailscale-auth
-        - name: TS_AUTHKEY
-          valueFrom:
-            secretKeyRef:
-              name: tailscale-auth
-              key: TS_AUTHKEY
-        - name: TS_USERSPACE
-          value: "false"
-        - name: TS_DEST_IP
-          value: 10.43.6.114
-      command: ["/bin/sh"]
-      args:
-        - -c
-        - "tailscale up --accept-dns=false --auth-key=$TS_AUTHKEY --accept-routes --advertise-routes=192.168.68.0/24"
-      securityContext:
-        capabilities:
-           add:
-            - NET_ADMIN
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tailscale-proxy
+  template:
+    metadata:
+      labels:
+        app: tailscale-proxy
+    spec:
+      serviceAccountName: tailscale
+      initContainers:
+        - name: sysctler
+          image: busybox:latest
+          securityContext:
+            privileged: true
+          command: ["/bin/sh"]
+          args:
+            - -c
+            - sysctl -w net.ipv4.ip_forward=1 net.ipv6.conf.all.forwarding=1
+      containers:
+        - name: tailscale
+          image: ghcr.io/tailscale/tailscale:latest
+          env:
+            - name: TS_KUBE_SECRET
+              value: tailscale-auth
+            - name: TS_AUTHKEY
+              valueFrom:
+                secretKeyRef:
+                  name: tailscale-auth
+                  key: TS_AUTHKEY
+            - name: TS_USERSPACE
+              value: "false"
+            - name: TS_DEST_IP
+              value: 10.43.6.114
+          securityContext:
+            capabilities:
+               add:
+                - NET_ADMIN
+          command:
+            - "/bin/sh"
+          args:
+            - -c
+            - "tailscale up --accept-dns=false --auth-key=$TS_AUTHKEY --accept-routes --advertise-routes=192.168.68.0/24"
