@@ -12,16 +12,16 @@ ingress:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
     nginx.ingress.kubernetes.io/use-regex: "true"
     nginx.ingress.kubernetes.io/rewrite-target: /$1
-  paths:
-    - path: /success/?(.*)
-      pathType: Prefix
-      name: success-app-dev-service
-      port: 80
-    - path: /trading-strategy-analysis/?(.*)
-      pathType: Prefix
-      name: tsa-dev-service
-      port: 80
-    - path: /optionviz/?(.*)
-      pathType: Prefix
-      name: optionsviz-dev-service
-      port: 80
+services:
+  - path: /success/?(.*)
+    pathType: Prefix
+    name: success-app-dev-service
+    port: 80
+  - path: /trading-strategy-analysis/?(.*)
+    pathType: Prefix
+    name: tsa-dev-service
+    port: 80
+  - path: /optionviz/?(.*)
+    pathType: Prefix
+    name: optionsviz-dev-service
+    port: 80
