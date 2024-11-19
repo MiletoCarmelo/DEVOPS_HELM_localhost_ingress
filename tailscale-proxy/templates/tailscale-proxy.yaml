@@ -19,7 +19,7 @@ spec:
         nameservers:
           - 10.43.0.10
         searches:
-          - tailscale.svc.cluster.local
+          - default.svc.cluster.local
           - svc.cluster.local
           - cluster.local
       containers:
@@ -31,8 +31,7 @@ spec:
               tailscaled --state=mem: --tun=userspace-networking &
               sleep 5
               tailscale up --authkey="${TS_AUTHKEY}" --hostname="${TS_HOSTNAME}"
-              tailscale serve --bg --http-handler=proxy http://localhost:8080/
-              nc -l -p 8080 -e sh -c 'echo -e "HTTP/1.1 200 OK\n\nHello"'
+              tailscale serve --bg http://${TS_DEST_IP}:80
               sleep infinity
           env:
             - name: TS_HOSTNAME
@@ -45,13 +44,12 @@ spec:
                 secretKeyRef:
                   name: ts-secrets
                   key: TS_AUTHKEY
+            - name: TS_DEST_IP
+              valueFrom:
+                secretKeyRef:
+                  name: ts-secrets
+                  key: TS_DEST_IP
           securityContext:
             capabilities:
               add:
                 - NET_ADMIN
-          livenessProbe:
-            httpGet:
-              path: /health
-              port: 41641
-            initialDelaySeconds: 60
-            periodSeconds: 60
