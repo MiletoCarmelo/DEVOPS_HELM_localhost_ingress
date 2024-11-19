@@ -62,9 +62,8 @@ spec:
             - |
               tailscaled --state=kube:ts-secrets &
               sleep 5
-              tailscale up --auth-key=${TS_AUTHKEY} --hostname="${TS_HOSTNAME}" --accept-routes --advertise-routes=${TS_ROUTES}
-              tailscale configure --accept-routes=true
-              tailscale serve --bg --http-open=80 --https=443 http://${TS_DEST_IP}
+              tailscale up --auth-key=${TS_AUTHKEY} --hostname="${TS_HOSTNAME}" --advertise-routes=${TS_ROUTES}
+              tailscale serve --bg http://${TS_DEST_IP}:80
               sleep infinity
           volumeMounts:
             - name: dev-net-tun
