@@ -18,21 +18,40 @@ spec:
         - name: tailscale
           image: ghcr.io/tailscale/tailscale:latest
           env:
-            - name: TS_KUBE_SECRET
-              value: tailscale-auth
+
             - name: TS_AUTHKEY
               valueFrom:
                 secretKeyRef:
                   name: tailscale-auth
                   key: TS_AUTHKEY
+
             - name: TS_USERSPACE
               value: "false"
-            - name: TS_DEST_IP
-              value: "10.43.6.114"
+
+            - name: TS_dest_IP
+              valueFrom:
+                secretKeyRef:
+                  name: tailscale-ip-ingress
+                  key: TS_IPINGRESS
+            
+            - name: TS_ROUTES
+              valueFrom:
+                secretKeyRef:
+                  name: tailscale-routes
+                  key: TS_ROUTES
+
+            - name: TS_HOSTNAME
+              valueFrom:
+                secretKeyRef:
+                  name: tailscale-ip-hostname
+                  key: TS_IPHOSTNAME                  
+
           securityContext:
             capabilities:
               add:
                 - NET_ADMIN
+
+
           command:
             - "/bin/sh"
             - "-c"
