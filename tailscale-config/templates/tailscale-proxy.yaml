@@ -19,6 +19,9 @@ spec:
           image: busybox:latest
           securityContext:
             privileged: true
+            capabilities:
+              add:
+                - NET_ADMIN
           command: ["/bin/sh"]
           args:
             - -c
