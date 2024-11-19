@@ -44,7 +44,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: ts-hostname
-                  key: TS_IPHOSTNAME                  
+                  key: TS_HOSTNAME                  
 
           securityContext:
             capabilities:
