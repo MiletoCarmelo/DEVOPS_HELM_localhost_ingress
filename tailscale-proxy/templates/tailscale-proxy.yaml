@@ -14,33 +14,6 @@ spec:
         app: tailscale-proxy
     spec:
       serviceAccountName: tailscale
-      initContainers:
-        - name: init-tailscale
-          image: busybox
-          resources:
-            limits:
-              memory: "64Mi"
-              cpu: "100m"
-            requests:
-              memory: "32Mi"
-              cpu: "50m"
-          command:
-            - /bin/sh
-            - -c
-            - |
-              echo "Creating /var/lib/tailscale"
-              mkdir -p /var/lib/tailscale
-              echo "Setting permissions"
-              chown -R tailscale:tailscale /var/lib/tailscale
-              echo "Init completed successfully"
-              sleep 600  # Garde le container vivant pour le débogage
-        - name: init-iptables
-          image: busybox
-          command:
-            - /bin/sh
-            - -c
-            - |
-              apt-get update && apt-get install -y iptables
       containers:
         - name: tailscale
           image: ghcr.io/tailscale/tailscale:latest
