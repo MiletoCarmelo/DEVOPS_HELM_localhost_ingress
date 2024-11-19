@@ -10,17 +10,18 @@ ingress:
     tailscale.com/expose: "true"
     nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false"
-    nginx.ingress.kubernetes.io/rewrite-target: /
-services:
-  - name: success-app-dev-service
-    port: 80
-    pathType: Prefix
-    path: /success
-  - name: tsa-dev-service
-    port: 80
-    pathType: Prefix
-    path: /trading-strategy-analysis
-  - name: optionsviz-dev-service
-    port: 80
-    pathType: Prefix
-    path: /optionviz
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+  paths:
+    - path: /success/?(.*)
+      pathType: Prefix
+      name: success-app-dev-service
+      port: 80
+    - path: /trading-strategy-analysis/?(.*)
+      pathType: Prefix
+      name: tsa-dev-service
+      port: 80
+    - path: /optionviz/?(.*)
+      pathType: Prefix
+      name: optionsviz-dev-service
+      port: 80
