@@ -15,7 +15,7 @@ ingress:
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false" # Semblable à ssl-redirect, mais plus explicite pour forcer ou non la redirection vers HTTPS. garder false ten quon utilise pas https exclusivement
     # si on na pas de sous-chemins alors commenter ces deux lignes du bas : 
     # nginx.ingress.kubernetes.io/use-regex: "true" # Permet l'utilisation d'expressions régulières dans les chemins spécifiés dans l'Ingress.
-    # nginx.ingress.kubernetes.io/rewrite-target: /$1
+    nginx.ingress.kubernetes.io/rewrite-target: /
 services:
   - path: /
     pathType: Prefix
