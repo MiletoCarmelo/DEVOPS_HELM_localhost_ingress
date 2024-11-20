@@ -8,9 +8,9 @@ ingress:
   className: nginx
   annotations:
     tailscale.com/expose: "true" # Annotation officielle Tailscale pour exposer les services
-    tailscale.com/serve: "true"  # Nouvelle annotation pour Tailscale serve
-    tailscale.com/https: "true"  # Gestionnaire HTTPS natif de Tailscale
-    tailscale.com/funnel: "true"  # Activation de Tailscale Funnel
+    # tailscale.com/serve: "true"  # Nouvelle annotation pour Tailscale serve
+    # tailscale.com/https: "true"  # Gestionnaire HTTPS natif de Tailscale
+    # tailscale.com/funnel: "true"  # Activation de Tailscale Funnel
     nginx.ingress.kubernetes.io/ssl-redirect: "false" # redirection automatique des requêtes HTTP vers HTTPS.
     nginx.ingress.kubernetes.io/force-ssl-redirect: "false" # Semblable à ssl-redirect, mais plus explicite pour forcer ou non la redirection vers HTTPS. garder false ten quon utilise pas https exclusivement
     # si on na pas de sous-chemins alors commenter ces deux lignes du bas : 
