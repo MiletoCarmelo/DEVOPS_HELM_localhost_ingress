@@ -1,9 +1,3 @@
-{{/* Debug information */}}
-{{- /* Affiche le mode */ -}}
-# Mode: {{ .Values.mode }}
-# IPAddressPools: {{ .Values.ipAddressPools | toYaml }}
-
-# templates/ipaddresspool.yaml
 {{- $mode := .Values.mode }}
 {{- $pools := .Values.ipAddressPools }}
 {{- $pool := index $pools $mode }}
