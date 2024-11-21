@@ -1,5 +1,5 @@
 # templates/ipaddresspool.yaml
-{{- $pool := index .Values.ipAddressPools .Values.mode }}
+{{- $pool := index .Values.ipAddressPools .Values.pool.name }}
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:

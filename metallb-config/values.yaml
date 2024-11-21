@@ -1,5 +1,6 @@
 # values.yaml
-mode: tailscale  # Peut être 'tailscale' ou 'standard'
+pool:
+  name: tailscale-pool  # Peut être 'tailscale' ou 'standard'
 
 ipAddressPools:
   standard:
