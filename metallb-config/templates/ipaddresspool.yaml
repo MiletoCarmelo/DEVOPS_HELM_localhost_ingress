@@ -1,9 +1,14 @@
+# templates/ipaddresspool.yaml
 {{- $pool := index .Values.ipAddressPools .Values.mode }}
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
   name: {{ $pool.name }}
-  namespace: {{ $pool.namespace }}
+  namespace: {{ .Release.Namespace }}
 spec:
   addresses:
-    - 192.168.68.5-192.168.68.15  # Plage d'IP incluant votre IP Minikube
+  - valueFrom:
+      secretKeyRef:
+        name: {{ $pool.secretRef.name }}
+        namespace: {{ $pool.namespace }}
+        key: {{ $pool.secretRef.key }}
