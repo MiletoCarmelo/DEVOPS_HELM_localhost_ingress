@@ -1,0 +1,31 @@
+{{/* Debug information */}}
+{{- /* Affiche le mode */ -}}
+# Mode: {{ .Values.mode }}
+# IPAddressPools: {{ .Values.ipAddressPools | toYaml }}
+
+# templates/ipaddresspool.yaml
+{{- $mode := .Values.mode }}
+{{- $pools := .Values.ipAddressPools }}
+{{- $pool := index $pools $mode }}
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: {{ $pool.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  addresses:
+  - valueFrom:
+      secretKeyRef:
+        name: {{ $pool.secretRef.name }}
+        namespace: {{ $pool.namespace }}
+        key: {{ $pool.secretRef.key }}
+
+# templates/l2advertisement.yaml
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: {{ .Values.l2Advertisements.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  ipAddressPools:
+  - {{ $pool.name }}
