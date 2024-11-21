@@ -27,7 +27,4 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   addresses:
-    - valueFrom:
-        secretKeyRef:
-          name: ts-ip-value
-          key: TS_IP
+    - 192.168.1.34
