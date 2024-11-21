@@ -1,9 +1,33 @@
+# templates/external-secret.yaml
+apiVersion: external-secrets.io/v1beta1
+kind: ExternalSecret
+metadata:
+  name: ts-ip-secret
+  namespace: {{ .Release.Namespace }}
+spec:
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: secret-store
+  refreshInterval: 1h
+  target:
+    name: ts-ip-value
+  data:
+    - secretKey: TS_IP
+      remoteRef:
+        key: tailscale/ts-secrets
+        property: TS_IP
+
+# templates/ipaddresspool.yaml
+{{- $pool := index .Values.ipAddressPools .Values.mode }}
 # templates/ipaddresspool.yaml
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
-  name: tailscale-pool
-  namespace: default
+  name: {{ $pool.name }}
+  namespace: {{ .Release.Namespace }}
 spec:
   addresses:
-    - '{{ `{{ (index (kubectl "get" "secret" "ts-secrets" "-n" "tailscale" "-o" "jsonpath={.data.TS_IP}") 0) | b64dec }}` }}'
+    - valueFrom:
+        secretKeyRef:
+          name: ts-ip-value
+          key: TS_IP

@@ -7,4 +7,4 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   ipAddressPools:
-    - {{ $pool.name }}
+  - {{ $pool.name }}
