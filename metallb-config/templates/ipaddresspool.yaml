@@ -1,0 +1,9 @@
+# metallb/templates/ipaddresspool.yaml
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: {{ .Values.ipAddressPools[.Values.mode].name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  addresses:
+    - {{ include "metallb.getSecretValue" (dict "secret" .Values.ipAddressPools[.Values.mode].secretRef "context" $) }}

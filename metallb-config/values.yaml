@@ -1,0 +1,17 @@
+# metallb/values.yaml
+mode: tailscale  # Peut être 'tailscale' ou 'standard'
+
+ipAddressPools:
+  standard:
+    name: first-pool
+    secretRef:
+      name: localhost-secrets
+      key: LOCALHOST_IP
+  tailscale:
+    name: tailscale-pool
+    secretRef:
+      name: ts-secrets
+      key: TS_IP
+
+l2Advertisements:
+  name: l2-advertisement
