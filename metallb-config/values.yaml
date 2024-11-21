@@ -1,4 +1,4 @@
-# metallb/values.yaml
+# values.yaml
 mode: tailscale  # Peut être 'tailscale' ou 'standard'
 
 ipAddressPools:
