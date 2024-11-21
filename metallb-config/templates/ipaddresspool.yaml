@@ -1,30 +1,8 @@
-# templates/external-secret.yaml
-apiVersion: external-secrets.io/v1beta1
-kind: ExternalSecret
-metadata:
-  name: ts-ip-secret
-  namespace: {{ .Release.Namespace }}
-spec:
-  secretStoreRef:
-    kind: ClusterSecretStore
-    name: secret-store
-  refreshInterval: 1h
-  target:
-    name: ts-ip-value
-  data:
-    - secretKey: TS_IP
-      remoteRef:
-        key: tailscale/ts-secrets
-        property: TS_IP
-
-# templates/ipaddresspool.yaml
-{{- $pool := index .Values.ipAddressPools .Values.mode }}
-# templates/ipaddresspool.yaml
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
-  name: {{ $pool.name }}
-  namespace: {{ .Release.Namespace }}
+  name: first-pool
+  namespace: metallb-system
 spec:
   addresses:
-    - 192.168.1.34
+    - 192.168.68.5-192.168.68.15  # Plage d'IP incluant votre IP Minikube
