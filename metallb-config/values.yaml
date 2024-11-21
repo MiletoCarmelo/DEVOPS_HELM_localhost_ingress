@@ -1,18 +1,19 @@
 # values.yaml
-mode: "tailscale" # Peut être 'tailscale' ou 'standard'
 namespace: "metallb-system"
 ipAddressPools:
-  standard:
-    name: "first-pool"
-    namespace: "metallb-system"
-    secretRef:
-      name: "localhost-secrets"
-      key: "LOCALHOST_IP"
-  tailscale:
-    name: "tailscale-pool"
-    namespace: "tailescale"
-    secretRef:
-      name: "ts-secrets"
-      key: "TS_IP"
+
+  # # standard:
+  # name: "first-pool"
+  # namespace: "metallb-system"
+  # secretRef:
+  #   name: "localhost-secrets"
+  #   key: "LOCALHOST_IP"
+
+  # tailscale:
+  name: "tailscale-pool"
+  namespace: "tailescale"
+  secretRef:
+    name: "ts-secrets"
+    key: "TS_IP"
 l2Advertisements:
   name: "l2-advertisement"

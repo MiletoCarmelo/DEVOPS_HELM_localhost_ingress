@@ -1,23 +1,13 @@
-# # templates/ipaddresspool.yaml
-# apiVersion: metallb.io/v1beta1
-# kind: IPAddressPool
-# metadata:
-#   name: tailscale-pool
-#   namespace: {{ .Release.Namespace }}
-# spec:
-#   addresses:
-#   - valueFrom:
-#       secretKeyRef:
-#         name: ts-secrets
-#         namespace: tailscale
-#         key: TS_IP
-
-
-# apiVersion: metallb.io/v1beta1
-# kind: IPAddressPool
-# metadata:
-#   name: first-pool
-#   namespace: metallb-system
-# spec:
-#   addresses:
-#     - 192.168.68.5-192.168.68.15  # Plage d'IP incluant votre IP Minikube
+# templates/ipaddresspool.yaml
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: {{ .Values.ipAddressPools.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  addresses:
+  - valueFrom:
+      secretKeyRef:
+        name: {{ .Values.ipAddressPools.secretRef.name }}
+        namespace: {{ .Values.ipAddressPools.namespace }}
+        key: {{ .Values.ipAddressPools.secretRef.key }}
