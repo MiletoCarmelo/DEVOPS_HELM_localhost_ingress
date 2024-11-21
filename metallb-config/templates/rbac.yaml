@@ -4,26 +4,26 @@ kind: Role
 metadata:
   name: secret-reader
 rules:
-- apiGroups: [""]
-  resources: ["secrets"]
-  verbs: ["get"]
-  resourceNames: ["ts-secrets"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get"]
+    resourceNames: ["ts-secrets"]
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
- name: metallb-secret-reader
+  name: metallb-secret-reader
 subjects:
-- kind: ServiceAccount
- name: metallb
- namespace: metallb-system
+  - kind: ServiceAccount
+    name: metallb
+    namespace: metallb-system
 roleRef:
- kind: ClusterRole
- name: secret-reader
- apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: secret-reader
+  apiGroup: rbac.authorization.k8s.io
 ---
 apiVersion: v1
 kind: ServiceAccount
 metadata:
- name: metallb
- namespace: metallb-system
+  name: metallb
+  namespace: metallb-system
