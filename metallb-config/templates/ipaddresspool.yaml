@@ -1,14 +1,13 @@
 # templates/ipaddresspool.yaml
-{{- $pool := index .Values.ipAddressPools .Values.mode }}
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
-  name: {{ $pool.name }}
+  name: tailscale-pool
   namespace: {{ .Release.Namespace }}
 spec:
   addresses:
   - valueFrom:
       secretKeyRef:
-        name: {{ $pool.secretRef.name }}
-        namespace: {{ $pool.namespace }}
-        key: {{ $pool.secretRef.key }}
+        name: ts-secrets
+        namespace: tailscale
+        key: TS_IP
