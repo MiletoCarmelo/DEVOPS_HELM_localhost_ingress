@@ -1,4 +1,4 @@
 apiVersion: v2
 name: ingress-setup
-description: Ingress configuration for quant-cm application
+description: Ingress configuration
 version: 0.1.0
