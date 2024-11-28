@@ -21,6 +21,10 @@ services:
     pathType: Prefix
     name: success-app-dev-service
     port: 80
+  - path: /
+    pathType: Prefix
+    name: dagster-dev-service
+    port: 80
   # - path: /success/?(.*)
   #   pathType: Prefix
   #   name: success-app-dev-service
