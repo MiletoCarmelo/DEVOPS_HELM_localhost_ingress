@@ -11,7 +11,7 @@ ipAddressPools:
 
   # tailscale:
   name: "tailscale-pool"
-  namespace: "tailescale"
+  namespace: "tailscale"
   secretRef:
     name: "ts-secrets"
     key: "TS_IP"
