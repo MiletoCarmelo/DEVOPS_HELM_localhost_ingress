@@ -1,6 +1,5 @@
 apiVersion: v2
 name: metallb-config
-description: metallb configuration
-type: application
+description: Configuration for MetalLB in Kubernetes
 version: 0.1.0
 appVersion: "1.0.0"

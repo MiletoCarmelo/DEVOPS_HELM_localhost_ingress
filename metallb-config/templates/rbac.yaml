@@ -4,26 +4,32 @@ kind: ServiceAccount
 metadata:
   name: metallb-init-config
   namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-10"  # Doit être créé en premier
 ---
-# Un seul ClusterRole pour toutes les permissions
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   name: metallb-init-role
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-9"
 rules:
 - apiGroups: [""]
   resources: ["secrets"]
   verbs: ["get"]
-  # Pas de resourceNames pour permettre l'accès cross-namespace
 - apiGroups: [""]
   resources: ["configmaps"]
   verbs: ["create", "update", "patch", "get"]
 ---
-# Un seul ClusterRoleBinding pour lier le ServiceAccount au ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding
 metadata:
   name: metallb-init-binding
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-8"
 subjects:
 - kind: ServiceAccount
   name: metallb-init-config
@@ -32,3 +38,33 @@ roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: metallb-init-role
+
+---
+# templates/job-init-pool.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: metallb-init-config-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"  # S'exécute après la création du RBAC
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 4
+  template:
+    metadata:
+      labels:
+        app: metallb-init-config
+    spec:
+      serviceAccountName: metallb-init-config
+      containers:
+      - name: init-config
+        image: bitnami/kubectl:latest
+        command:
+        - /bin/sh
+        - -xec
+        - |
+          echo "=== Starting init job at $(date) ==="
+          kubectl get serviceaccount metallb-init-config
+          kubectl auth can-i get

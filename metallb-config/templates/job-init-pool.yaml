@@ -6,10 +6,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-weight": "-5"  # S'exécute après la création du RBAC
     "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
-  ttlSecondsAfterFinished: 100
   backoffLimit: 4
   template:
     metadata:
@@ -22,34 +21,20 @@ spec:
         image: bitnami/kubectl:latest
         command:
         - /bin/sh
-        - -c
+        - -xec
         - |
-          set -x  # Active le mode debug
-          echo "Starting configuration at $(date)"
+          echo "=== Starting init job at $(date) ==="
+          kubectl get serviceaccount metallb-init-config
+          kubectl auth can-i get secrets -n tailscale
+          kubectl auth can-i create configmap -n {{ .Release.Namespace }}
           
-          # Test d'accès au secret
-          echo "Testing secret access..."
-          SECRET_TEST=$(kubectl get secret -n tailscale ts-secrets -o name) || { echo "Cannot access secret"; exit 1; }
-          echo "Secret test result: $SECRET_TEST"
-          
-          # Lecture de l'IP
-          echo "Reading IP from secret..."
           IP=$(kubectl get secret -n tailscale ts-secrets -o jsonpath="{.data.TS_IP}" | base64 -d)
-          echo "IP read: $IP"
+          echo "IP from secret: $IP"
           
-          # Création/Mise à jour du ConfigMap
-          echo "Creating/updating ConfigMap..."
           kubectl create configmap metallb-ip-config \
-            -n metallb-system \
+            -n {{ .Release.Namespace }} \
             --from-literal=addresses="$IP" \
             --dry-run=client -o yaml | kubectl apply -f -
           
-          echo "Configuration completed at $(date)"
-        resources:
-          requests:
-            memory: "64Mi"
-            cpu: "100m"
-          limits:
-            memory: "128Mi"
-            cpu: "200m"
+          echo "=== Job completed at $(date) ==="
       restartPolicy: Never
