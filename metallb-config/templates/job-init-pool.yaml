@@ -38,45 +38,26 @@ spec:
         #     --dry-run=client -o yaml | kubectl apply -f -
           
         #   echo "=== Job completed at $(date) ==="
-      command:
-      - /bin/sh
-      - -xec
-      - |
+        command:
+        - /bin/sh
+        - -xec
+        - |
           echo "=== Starting init job at $(date) ==="
-          
-          # Vérification de l'existence du secret
           if ! kubectl get secret -n tailscale ts-secrets; then
             echo "Secret ts-secrets not found! Exiting."
             exit 1
           fi
-          echo "=== Secret ts-secrets found ==="
-          
-          # Vérification de la clé TS_IP dans le secret
           if ! kubectl get secret -n tailscale ts-secrets -o jsonpath="{.data.TS_IP}" | base64 -d; then
             echo "Key TS_IP not found in secret! Exiting."
             exit 1
           fi
-          echo "=== Key TS_IP found and decoded ==="
-
-          # Extraction de l'IP du secret et affichage
+          
           IP=$(kubectl get secret -n tailscale ts-secrets -o jsonpath="{.data.TS_IP}" | base64 -d)
           echo "IP from secret: $IP"
           
-          # Création du ConfigMap
-          if ! kubectl create configmap metallb-ip-config -n {{ .Release.Namespace }} --from-literal=addresses="$IP" --dry-run=client -o yaml | kubectl apply -f -; then
-            echo "Failed to create or apply ConfigMap metallb-ip-config! Exiting."
-            exit 1
-          fi
-          echo "=== ConfigMap metallb-ip-config applied successfully ==="
-
-          # Affichage du contenu du ConfigMap créé pour confirmation
-          echo "=== Verifying ConfigMap metallb-ip-config ==="
-          kubectl get configmap metallb-ip-config -n {{ .Release.Namespace }} -o yaml
-
-          # Check final values
-          echo "=== Final check of values ==="
-          echo "Secret IP: $IP"
-          echo "ConfigMap metallb-ip-config in {{ .Release.Namespace }}: $(kubectl get configmap metallb-ip-config -n {{ .Release.Namespace }} -o jsonpath='{.data.addresses}')"
-
+          kubectl create configmap metallb-ip-config \
+            -n {{ .Release.Namespace }} \
+            --from-literal=addresses="$IP" \
+            --dry-run=client -o yaml | kubectl apply -f -
+          
           echo "=== Job completed at $(date) ==="
-
