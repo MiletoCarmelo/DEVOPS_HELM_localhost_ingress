@@ -1,10 +1,10 @@
 # values.yaml
 ipAddressPools:
   name: "first-pool"
-  namespace: "tailscale"  # namespace où se trouve le secret
+  namespace: "metallb-system"  # Namespace du ConfigMap
   secretRef:
-    name: "ts-secrets"    # nom du secret
-    key: "TS_IP"         # clé dans le secret
+    name: "ts-secrets"         # Nom du secret dans le namespace tailscale
+    key: "TS_IP"               # Clé dans le secret
 
 l2Advertisements:
   name: "l2-advertisement"
