@@ -3,10 +3,10 @@
 # values.yaml
 ipAddressPools:
   name: "first-pool"
-  namespace: "tailscale"  # namespace où se trouve le secret
+  namespace: "metallb-system"  # Namespace du ConfigMap
   secretRef:
-    name: "ts-secrets"    # nom du secret
-    key: "TS_IP"         # clé dans le secret
+    name: "ts-secrets"         # Nom du secret dans le namespace tailscale
+    key: "TS_IP"               # Clé dans le secret
 
 l2Advertisements:
   name: "l2-advertisement"
@@ -17,6 +17,7 @@ webhook:
     create: true
   tls:
     generate: true
+
 
 ==== ./metallb-config/Chart.yaml ====
 
@@ -48,7 +49,8 @@ metadata:
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-weight": "-5"  # S'exécute après la création du RBAC
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    # "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   backoffLimit: 4
   template:
@@ -61,24 +63,48 @@ spec:
       containers:
       - name: init-config
         image: bitnami/kubectl:latest
+        # command:
+        # - /bin/sh
+        # - -xec
+        # - |
+        #   echo "=== Starting init job at $(date) ==="
+        #   kubectl get serviceaccount metallb-init-config
+        #   kubectl auth can-i get secrets -n tailscale
+        #   kubectl auth can-i create configmap -n metallb-system
+          
+        #   IP=$(kubectl get secret -n tailscale ts-secrets -o jsonpath="{.data.TS_IP}" | base64 -d)
+        #   echo "IP from secret: $IP"
+          
+        #   kubectl create configmap metallb-ip-config \
+        #     -n metallb-system \
+        #     --from-literal=addresses="$IP" \
+        #     --dry-run=client -o yaml | kubectl apply -f -
+          
+        #   echo "=== Job completed at $(date) ==="
         command:
         - /bin/sh
         - -xec
         - |
           echo "=== Starting init job at $(date) ==="
-          kubectl get serviceaccount metallb-init-config
-          kubectl auth can-i get secrets -n tailscale
-          kubectl auth can-i create configmap -n metallb-system
+          if ! kubectl get secret -n tailscale ts-secrets; then
+            echo "Secret ts-secrets not found! Exiting."
+            exit 1
+          fi
+          if ! kubectl get secret -n tailscale ts-secrets -o jsonpath="{.data.TS_IP}" | base64 -d; then
+            echo "Key TS_IP not found in secret! Exiting."
+            exit 1
+          fi
           
           IP=$(kubectl get secret -n tailscale ts-secrets -o jsonpath="{.data.TS_IP}" | base64 -d)
-          echo "IP from secret: $IP"
+          echo -p "IP from secret: $IP"
           
           kubectl create configmap metallb-ip-config \
-            -n metallb-system \
+            -n {{ .Release.Namespace }} \
             --from-literal=addresses="$IP" \
             --dry-run=client -o yaml | kubectl apply -f -
           
           echo "=== Job completed at $(date) ==="
+
 
 ==== ./metallb-config/templates/ipaddresspool.yaml ====
 
@@ -88,8 +114,10 @@ metadata:
   name: first-pool
   namespace: metallb-system
 spec:
-  addresses: []  # Le Job va remplir cette valeur via le ConfigMap
+  addresses:
+  - {{ .Values.ipAddressPools.namespace }}/metallb-ip-config  # Référence correcte du configmap
   autoAssign: true
+
 
 ==== ./metallb-config/templates/rbac.yaml ====
 
@@ -116,6 +144,10 @@ rules:
 - apiGroups: [""]
   resources: ["configmaps"]
   verbs: ["create", "update", "patch", "get"]
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get"]
+  namespaces: ["tailscale"]  # Assurez-vous d'ajouter la restriction de namespace ici
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRoleBinding

@@ -53,11 +53,18 @@ spec:
           fi
           
           IP=$(kubectl get secret -n tailscale ts-secrets -o jsonpath="{.data.TS_IP}" | base64 -d)
-          echo "IP from secret: $IP"
+          echo -p "IP from secret: $IP"
           
           kubectl create configmap metallb-ip-config \
             -n {{ .Release.Namespace }} \
             --from-literal=addresses="$IP" \
             --dry-run=client -o yaml | kubectl apply -f -
+
+          echo "configmap created"
+
+          # Patch le manifeste IPAddressPool avec l'adresse récupérée
+          kubectl patch ipaddresspool first-pool -n metallb-system --type merge -p '{"spec": {"addresses": ["'"$IP"'"]}}'
+
+          echo "ipaddresspool patched for adressses argument"
           
           echo "=== Job completed at $(date) ==="
