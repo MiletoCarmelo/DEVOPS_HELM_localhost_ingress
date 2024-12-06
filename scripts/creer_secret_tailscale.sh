@@ -12,20 +12,27 @@ TS_DEST_IP=$(grep TS_DEST_IP .env | cut -d '=' -f2)
 TS_ROUTES=$(grep TS_ROUTES .env | cut -d '=' -f2)
 TS_HOSTNAME=$(grep TS_HOSTNAME .env | cut -d '=' -f2)
 
-# Lecture de l'IP et ajout du masque CIDR si nécessaire
+# Lecture de l'IP Tailscale et ajout du masque CIDR si nécessaire
 TS_IP=$(grep TS_IP .env | cut -d '=' -f2)
 if [[ ! $TS_IP =~ /[0-9]{1,2}$ ]]; then
     TS_IP="${TS_IP}/32"
     echo "ℹ️  Ajout du masque CIDR à l'adresse IP Tailscale: ${TS_IP}"
 fi
 
+# Lecture de l'IP Localhost - gestion spéciale pour les plages d'adresses
 LOCALHOST_IP=$(grep LOCALHOST_IP .env | cut -d '=' -f2)
-if [[ ! $LOCALHOST_IP =~ /[0-9]{1,2}$ ]]; then
-    LOCALHOST_IP="${LOCALHOST_IP}/32"
-    echo "ℹ️  Ajout du masque CIDR à l'adresse IP Localhost: ${LOCALHOST_IP}"
+if [[ $LOCALHOST_IP =~ "-" ]]; then
+    # C'est une plage d'adresses, pas besoin d'ajouter /32
+    echo "ℹ️  Utilisation de la plage d'adresses pour Localhost: ${LOCALHOST_IP}"
+else
+    # C'est une adresse unique, ajouter /32
+    if [[ ! $LOCALHOST_IP =~ /[0-9]{1,2}$ ]]; then
+        LOCALHOST_IP="${LOCALHOST_IP}/32"
+        echo "ℹ️  Ajout du masque CIDR à l'adresse IP Localhost: ${LOCALHOST_IP}"
+    fi
 fi
 
-# Création du namespace si nécessaire
+# Création des namespaces si nécessaire
 for NS in "$NAMESPACE" "$NAMESPACE_localhost"; do
     if ! kubectl get namespace "$NS" >/dev/null 2>&1; then
         echo "🔄 Création du namespace ${NS}..."

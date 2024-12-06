@@ -1,19 +1,10 @@
 # values.yaml
-namespace: "metallb-system"
 ipAddressPools:
-
-  # # standard:
-  # name: "first-pool"
-  # namespace: "metallb-system"
-  # secretRef:
-  #   name: "localhost-secrets"
-  #   key: "LOCALHOST_IP"
-
-  # tailscale:
-  name: "tailscale-pool"
-  namespace: "tailscale"
+  name: "first-pool"
+  namespace: "tailscale"  # namespace où se trouve le secret
   secretRef:
-    name: "ts-secrets"
-    key: "TS_IP"
+    name: "ts-secrets"    # nom du secret
+    key: "TS_IP"         # clé dans le secret
+
 l2Advertisements:
   name: "l2-advertisement"

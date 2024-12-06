@@ -1,0 +1,27 @@
+# templates/job-init-pool.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: metallb-init-config-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": hook-succeeded
+spec:
+  template:
+    spec:
+      serviceAccountName: metallb-init-config
+      containers:
+      - name: init-config
+        image: bitnami/kubectl:latest
+        command:
+        - /bin/bash
+        - -c
+        - |
+          # Lire l'IP depuis le secret
+          IP=$(kubectl get secret -n {{ .Values.ipAddressPools.namespace }} {{ .Values.ipAddressPools.secretRef.name }} -o jsonpath="{.data.{{ .Values.ipAddressPools.secretRef.key }}}" | base64 -d)
+          # Créer le ConfigMap avec l'IP
+          kubectl create configmap metallb-ip-config -n {{ .Release.Namespace }} --from-literal=addresses=$IP --dry-run=client -o yaml | kubectl apply -f -
+      restartPolicy: Never
+  backoffLimit: 4

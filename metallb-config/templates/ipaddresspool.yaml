@@ -1,3 +1,17 @@
+# # templates/ipaddresspool.yaml
+# apiVersion: metallb.io/v1beta1
+# kind: IPAddressPool
+# metadata:
+#   name: {{ .Values.ipAddressPools.name }}
+#   namespace: {{ .Release.Namespace }}
+# spec:
+#   addresses:
+#   - valueFrom:
+#       secretKeyRef:
+#         name: {{ .Values.ipAddressPools.secretRef.name }}
+#         namespace: {{ .Values.ipAddressPools.namespace }}
+#         key: {{ .Values.ipAddressPools.secretRef.key }}
+
 # templates/ipaddresspool.yaml
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
@@ -6,8 +20,8 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   addresses:
-  - valueFrom:
-      secretKeyRef:
-        name: {{ .Values.ipAddressPools.secretRef.name }}
-        namespace: {{ .Values.ipAddressPools.namespace }}
-        key: {{ .Values.ipAddressPools.secretRef.key }}
+  {{- with (lookup "v1" "ConfigMap" .Release.Namespace "metallb-ip-config") }}
+  {{ .data.addresses | splitList "," | toYaml | nindent 2 }}
+  {{- end }}
+  autoAssign: true
+
