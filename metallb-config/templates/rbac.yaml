@@ -5,27 +5,30 @@ metadata:
   name: metallb-init-config
   namespace: {{ .Release.Namespace }}
 ---
+# Un seul ClusterRole pour toutes les permissions
 apiVersion: rbac.authorization.k8s.io/v1
-kind: Role
+kind: ClusterRole
 metadata:
-  name: metallb-secret-reader
-  namespace: {{ .Values.ipAddressPools.namespace }}
+  name: metallb-init-role
 rules:
 - apiGroups: [""]
   resources: ["secrets"]
   verbs: ["get"]
-  resourceNames: ["{{ .Values.ipAddressPools.secretRef.name }}"]
+  # Pas de resourceNames pour permettre l'accès cross-namespace
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["create", "update", "patch", "get"]
 ---
+# Un seul ClusterRoleBinding pour lier le ServiceAccount au ClusterRole
 apiVersion: rbac.authorization.k8s.io/v1
-kind: RoleBinding
+kind: ClusterRoleBinding
 metadata:
-  name: metallb-secret-reader
-  namespace: {{ .Values.ipAddressPools.namespace }}
+  name: metallb-init-binding
 subjects:
 - kind: ServiceAccount
   name: metallb-init-config
   namespace: {{ .Release.Namespace }}
 roleRef:
-  kind: Role
-  name: metallb-secret-reader
   apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: metallb-init-role
