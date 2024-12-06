@@ -8,3 +8,6 @@ ipAddressPools:
 
 l2Advertisements:
   name: "l2-advertisement"
+
+webhook:
+  enabled: true
