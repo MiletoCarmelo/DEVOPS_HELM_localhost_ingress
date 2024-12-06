@@ -1,0 +1,181 @@
+==== ./values.yaml ====
+
+# values.yaml
+ipAddressPools:
+  name: "first-pool"
+  namespace: "tailscale"  # namespace où se trouve le secret
+  secretRef:
+    name: "ts-secrets"    # nom du secret
+    key: "TS_IP"         # clé dans le secret
+
+l2Advertisements:
+  name: "l2-advertisement"
+
+==== ./Chart.yaml ====
+
+apiVersion: v2
+name: metallb-config
+description: Configuration for MetalLB in Kubernetes
+version: 0.1.0
+appVersion: "1.0.0"
+
+==== ./templates/l2advertisement.yaml ====
+
+# templates/l2advertisement.yaml
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: {{ .Values.l2Advertisements.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  ipAddressPools:
+    - {{ .Values.ipAddressPools.name }}
+
+==== ./templates/job-init-pool.yaml ====
+
+# templates/job-init-pool.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: metallb-init-config-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"  # S'exécute après la création du RBAC
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 4
+  template:
+    metadata:
+      labels:
+        app: metallb-init-config
+    spec:
+      serviceAccountName: metallb-init-config
+      containers:
+      - name: init-config
+        image: bitnami/kubectl:latest
+        command:
+        - /bin/sh
+        - -xec
+        - |
+          echo "=== Starting init job at $(date) ==="
+          kubectl get serviceaccount metallb-init-config
+          kubectl auth can-i get secrets -n tailscale
+          kubectl auth can-i create configmap -n {{ .Release.Namespace }}
+          
+          IP=$(kubectl get secret -n tailscale ts-secrets -o jsonpath="{.data.TS_IP}" | base64 -d)
+          echo "IP from secret: $IP"
+          
+          kubectl create configmap metallb-ip-config \
+            -n {{ .Release.Namespace }} \
+            --from-literal=addresses="$IP" \
+            --dry-run=client -o yaml | kubectl apply -f -
+          
+          echo "=== Job completed at $(date) ==="
+      restartPolicy: Never
+
+==== ./templates/ipaddresspool.yaml ====
+
+# # templates/ipaddresspool.yaml
+# apiVersion: metallb.io/v1beta1
+# kind: IPAddressPool
+# metadata:
+#   name: {{ .Values.ipAddressPools.name }}
+#   namespace: {{ .Release.Namespace }}
+# spec:
+#   addresses:
+#   - valueFrom:
+#       secretKeyRef:
+#         name: {{ .Values.ipAddressPools.secretRef.name }}
+#         namespace: {{ .Values.ipAddressPools.namespace }}
+#         key: {{ .Values.ipAddressPools.secretRef.key }}
+
+# templates/ipaddresspool.yaml
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: {{ .Values.ipAddressPools.name }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  addresses:
+  {{- $configMap := (lookup "v1" "ConfigMap" .Release.Namespace "metallb-ip-config") }}
+  {{- if and $configMap $configMap.data.addresses }}
+  - {{ $configMap.data.addresses }}
+  {{- end }}
+  autoAssign: true
+
+
+
+==== ./templates/rbac.yaml ====
+
+# templates/rbac.yaml
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: metallb-init-config
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-10"  # Doit être créé en premier
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: metallb-init-role
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-9"
+rules:
+- apiGroups: [""]
+  resources: ["secrets"]
+  verbs: ["get"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["create", "update", "patch", "get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: metallb-init-binding
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-8"
+subjects:
+- kind: ServiceAccount
+  name: metallb-init-config
+  namespace: {{ .Release.Namespace }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: metallb-init-role
+
+---
+# templates/job-init-pool.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: metallb-init-config-{{ .Release.Name }}
+  namespace: {{ .Release.Namespace }}
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"  # S'exécute après la création du RBAC
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  backoffLimit: 4
+  template:
+    metadata:
+      labels:
+        app: metallb-init-config
+    spec:
+      serviceAccountName: metallb-init-config
+      containers:
+      - name: init-config
+        image: bitnami/kubectl:latest
+        command:
+        - /bin/sh
+        - -xec
+        - |
+          echo "=== Starting init job at $(date) ==="
+          kubectl get serviceaccount metallb-init-config
+          kubectl auth can-i get
+

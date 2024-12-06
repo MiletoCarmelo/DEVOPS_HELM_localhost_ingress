@@ -16,6 +16,7 @@ spec:
         app: metallb-init-config
     spec:
       serviceAccountName: metallb-init-config
+      restartPolicy: Never
       containers:
       - name: init-config
         image: bitnami/kubectl:latest

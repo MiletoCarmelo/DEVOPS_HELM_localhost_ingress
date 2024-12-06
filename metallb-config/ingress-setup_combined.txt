@@ -1,0 +1,153 @@
+==== ../ingress-setup/values.dev.yaml ====
+
+module: ingress-setup
+environment: dev
+baseDomain: cquant-desktop.tailc6fb0e.ts.net
+tls:
+  issuer: selfsigned
+  enabled: false # si true: l'ingress tente de générer en https 
+ingress:
+  className: nginx
+  annotations:
+    tailscale.com/expose: "true" # Annotation officielle Tailscale pour exposer les services
+    # tailscale.com/serve: "true"  # Nouvelle annotation pour Tailscale serve
+    # tailscale.com/https: "true"  # Gestionnaire HTTPS natif de Tailscale
+    # tailscale.com/funnel: "true"  # Activation de Tailscale Funnel
+    nginx.ingress.kubernetes.io/ssl-redirect: "false" # redirection automatique des requêtes HTTP vers HTTPS.
+    nginx.ingress.kubernetes.io/force-ssl-redirect: "false" # Semblable à ssl-redirect, mais plus explicite pour forcer ou non la redirection vers HTTPS. garder false ten quon utilise pas https exclusivement
+    # si on na pas de sous-chemins alors commenter ces deux lignes du bas : 
+    # nginx.ingress.kubernetes.io/use-regex: "true" # Permet l'utilisation d'expressions régulières dans les chemins spécifiés dans l'Ingress.
+    nginx.ingress.kubernetes.io/rewrite-target: /
+services:
+  - path: /
+    pathType: Prefix
+    name: success-app-dev-service
+    port: 80
+  - path: /
+    pathType: Prefix
+    name: dagster-dev-service
+    port: 80
+  # - path: /success/?(.*)
+  #   pathType: Prefix
+  #   name: success-app-dev-service
+  #   port: 80
+  # - path: /trading-strategy-analysis/?(.*)
+  #   pathType: Prefix
+  #   name: tsa-dev-service
+  #   port: 80
+  # - path: /optionviz/?(.*)
+  #   pathType: Prefix
+  #   name: optionsviz-dev-service
+  #   port: 80
+
+==== ../ingress-setup/Chart.yaml ====
+
+apiVersion: v2
+name: ingress-setup
+description: Ingress configuration
+version: 0.1.0
+
+==== ../ingress-setup/values.prod.yaml ====
+
+# values-prod.yaml
+environment: prod
+domain: quant-cm.com
+infos:
+  email: quant-cm@gmail.com
+service:
+  port: 80
+  targetPort: 8070
+ingress:
+  enabled: true
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt"
+  hosts:
+    paths:
+      - path: /
+        pathType: Prefix
+  tls:
+    - secretName: quant-cm-cert-prod
+    - certificateName: quant-cm-cert-prod
+
+==== ../ingress-setup/templates/certificate.yaml ====
+
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Values.module }}-{{ .Values.environment }}-certificate
+  namespace: {{ .Values.environment }}
+  labels:
+    {{- include "ingress-setup.labels" . | nindent 4 }}
+spec:
+  secretName: {{ include "ingress-setup.tlsSecretName" . }}
+  issuerRef:
+    name: {{ .Values.module }}-{{ .Values.environment }}-issuer
+    kind: ClusterIssuer
+  dnsNames:
+    - {{ .Values.baseDomain }}
+  commonName: {{ .Values.baseDomain }}
+  duration: 2160h
+  renewBefore: 360h
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  usages:
+    - server auth
+
+==== ../ingress-setup/templates/cert-manager.yaml ====
+
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ .Values.module }}-{{ .Values.environment }}-issuer
+  namespace: {{ .Values.environment }}
+spec:
+  {{- if eq .Values.environment "dev" }}
+  selfSigned: {}
+  {{- else }}
+  acme:
+    server: https://acme-v02.api.letsencrypt.org/directory
+    email: {{ .Values.infos.email }}
+    privateKeySecretRef:
+      name: letsencrypt-{{ .Values.environment }}
+    solvers:
+      - http01:
+          ingress:
+            class: nginx
+  {{- end }}
+
+==== ../ingress-setup/templates/ingress.yaml ====
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ .Values.module }}-{{ .Values.environment }}-ingress
+  namespace: {{ .Values.environment }}
+  labels:
+    {{- include "ingress-setup.labels" . | nindent 4 }}
+  annotations:
+    {{- with .Values.ingress.annotations }}
+    {{- toYaml . | nindent 4 }}
+    {{- end }}
+spec:
+  ingressClassName: {{ .Values.ingress.className }}
+  tls:
+    - secretName: {{ include "ingress-setup.tlsSecretName" . }}
+      hosts:
+        - {{ $.Values.baseDomain }}
+  rules:
+    - host: {{ $.Values.baseDomain }}
+      http:
+        paths:
+        {{- if .Values.services }}
+        {{- range .Values.services }}
+          - path: {{ .path }}
+            pathType: {{ .pathType }}
+            backend:
+              service:
+                name: {{ .name }}
+                port:
+                  number: {{ .port }}
+        {{- end }}
+        {{- end }}
+
