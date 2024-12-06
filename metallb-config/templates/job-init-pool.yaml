@@ -6,7 +6,8 @@ metadata:
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-weight": "-5"  # S'exécute après la création du RBAC
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    # "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-delete-policy": before-hook-creation
 spec:
   backoffLimit: 4
   template:
@@ -19,20 +20,43 @@ spec:
       containers:
       - name: init-config
         image: bitnami/kubectl:latest
+        # command:
+        # - /bin/sh
+        # - -xec
+        # - |
+        #   echo "=== Starting init job at $(date) ==="
+        #   kubectl get serviceaccount metallb-init-config
+        #   kubectl auth can-i get secrets -n tailscale
+        #   kubectl auth can-i create configmap -n metallb-system
+          
+        #   IP=$(kubectl get secret -n tailscale ts-secrets -o jsonpath="{.data.TS_IP}" | base64 -d)
+        #   echo "IP from secret: $IP"
+          
+        #   kubectl create configmap metallb-ip-config \
+        #     -n metallb-system \
+        #     --from-literal=addresses="$IP" \
+        #     --dry-run=client -o yaml | kubectl apply -f -
+          
+        #   echo "=== Job completed at $(date) ==="
         command:
         - /bin/sh
         - -xec
         - |
           echo "=== Starting init job at $(date) ==="
-          kubectl get serviceaccount metallb-init-config
-          kubectl auth can-i get secrets -n tailscale
-          kubectl auth can-i create configmap -n metallb-system
+          if ! kubectl get secret -n tailscale ts-secrets; then
+            echo "Secret ts-secrets not found! Exiting."
+            exit 1
+          fi
+          if ! kubectl get secret -n tailscale ts-secrets -o jsonpath="{.data.TS_IP}" | base64 -d; then
+            echo "Key TS_IP not found in secret! Exiting."
+            exit 1
+          fi
           
           IP=$(kubectl get secret -n tailscale ts-secrets -o jsonpath="{.data.TS_IP}" | base64 -d)
           echo "IP from secret: $IP"
           
           kubectl create configmap metallb-ip-config \
-            -n metallb-system \
+            -n {{ .Release.Namespace }} \
             --from-literal=addresses="$IP" \
             --dry-run=client -o yaml | kubectl apply -f -
           

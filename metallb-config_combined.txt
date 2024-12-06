@@ -11,6 +11,13 @@ ipAddressPools:
 l2Advertisements:
   name: "l2-advertisement"
 
+webhook:
+  enabled: true
+  serviceAccount:
+    create: true
+  tls:
+    generate: true
+
 ==== ./metallb-config/Chart.yaml ====
 
 apiVersion: v2
