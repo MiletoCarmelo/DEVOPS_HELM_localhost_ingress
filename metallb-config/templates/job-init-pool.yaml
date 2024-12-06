@@ -21,7 +21,7 @@ spec:
         - |
           # Lire l'IP depuis le secret
           IP=$(kubectl get secret -n {{ .Values.ipAddressPools.namespace }} {{ .Values.ipAddressPools.secretRef.name }} -o jsonpath="{.data.{{ .Values.ipAddressPools.secretRef.key }}}" | base64 -d)
-          # Créer le ConfigMap avec l'IP
-          kubectl create configmap metallb-ip-config -n {{ .Release.Namespace }} --from-literal=addresses=$IP --dry-run=client -o yaml | kubectl apply -f -
+          # Stocker l'IP dans un ConfigMap
+          kubectl create configmap metallb-ip-config -n {{ .Release.Namespace }} --from-literal=addresses="$IP" || kubectl patch configmap metallb-ip-config -n {{ .Release.Namespace }} --type=merge -p "{\"data\":{\"addresses\":\"$IP\"}}"
       restartPolicy: Never
   backoffLimit: 4

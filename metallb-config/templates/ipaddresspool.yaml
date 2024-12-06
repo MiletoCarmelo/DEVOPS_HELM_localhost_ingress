@@ -20,8 +20,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   addresses:
-  {{- with (lookup "v1" "ConfigMap" .Release.Namespace "metallb-ip-config") }}
-  {{ .data.addresses | splitList "," | toYaml | nindent 2 }}
+  {{- $configMap := (lookup "v1" "ConfigMap" .Release.Namespace "metallb-ip-config") }}
+  {{- if and $configMap $configMap.data.addresses }}
+  - {{ $configMap.data.addresses }}
   {{- end }}
   autoAssign: true
 
