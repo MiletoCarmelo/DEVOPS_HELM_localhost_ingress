@@ -1,8 +1,12 @@
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
-  name: first-pool
-  namespace: metallb-system
+  name: {{ .Values.ipAddressPools.name }}
+  namespace: {{ .Release.Namespace }}
 spec:
-  addresses: []  # Le Job va remplir cette valeur via le ConfigMap
+  addresses:
+    - {{- $configMap := (lookup "v1" "ConfigMap" .Release.Namespace "metallb-ip-config") }}
+    {{- if and $configMap $configMap.data.addresses }}
+    - {{ $configMap.data.addresses }}
+    {{- end }}
   autoAssign: true
