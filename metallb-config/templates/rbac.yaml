@@ -1,3 +1,12 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: metallb-init-config
+  namespace: metallb-system
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-10"
+---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
@@ -7,8 +16,24 @@ metadata:
     "helm.sh/hook-weight": "-9"
 rules:
 - apiGroups: [""]
-  resources: ["secrets", "serviceaccounts"]
+  resources: ["secrets", "serviceaccounts"]  # Ajout de serviceaccounts
   verbs: ["get"]
-- apiGroups: ["metallb.io"]  # Ajout des permissions MetalLB
-  resources: ["ipaddresspools"]
-  verbs: ["get", "patch"]
+- apiGroups: [""]
+  resources: ["configmaps"]
+  verbs: ["create", "update", "patch", "get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: metallb-init-binding
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-8"
+subjects:
+- kind: ServiceAccount
+  name: metallb-init-config
+  namespace: metallb-system
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: metallb-init-role
