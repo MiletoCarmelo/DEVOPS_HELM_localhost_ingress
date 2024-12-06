@@ -5,5 +5,5 @@ metadata:
   namespace: metallb-system
 spec:
   addresses:
-  - {{ .Values.ipAddressPools.namespace }}/metallb-ip-config  # Référence correcte du configmap
+  - ShouldBeModifiedByTheJob
   autoAssign: true
