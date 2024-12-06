@@ -7,21 +7,49 @@ metadata:
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-weight": "-5"
-    "helm.sh/hook-delete-policy": hook-succeeded
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
 spec:
+  ttlSecondsAfterFinished: 100
+  backoffLimit: 4
   template:
+    metadata:
+      labels:
+        app: metallb-init-config
     spec:
       serviceAccountName: metallb-init-config
       containers:
       - name: init-config
         image: bitnami/kubectl:latest
         command:
-        - /bin/bash
+        - /bin/sh
         - -c
         - |
-          # Lire l'IP depuis le secret
-          IP=$(kubectl get secret -n {{ .Values.ipAddressPools.namespace }} {{ .Values.ipAddressPools.secretRef.name }} -o jsonpath="{.data.{{ .Values.ipAddressPools.secretRef.key }}}" | base64 -d)
-          # Stocker l'IP dans un ConfigMap
-          kubectl create configmap metallb-ip-config -n {{ .Release.Namespace }} --from-literal=addresses="$IP" || kubectl patch configmap metallb-ip-config -n {{ .Release.Namespace }} --type=merge -p "{\"data\":{\"addresses\":\"$IP\"}}"
+          set -x  # Active le mode debug
+          echo "Starting configuration at $(date)"
+          
+          # Test d'accès au secret
+          echo "Testing secret access..."
+          SECRET_TEST=$(kubectl get secret -n tailscale ts-secrets -o name) || { echo "Cannot access secret"; exit 1; }
+          echo "Secret test result: $SECRET_TEST"
+          
+          # Lecture de l'IP
+          echo "Reading IP from secret..."
+          IP=$(kubectl get secret -n tailscale ts-secrets -o jsonpath="{.data.TS_IP}" | base64 -d)
+          echo "IP read: $IP"
+          
+          # Création/Mise à jour du ConfigMap
+          echo "Creating/updating ConfigMap..."
+          kubectl create configmap metallb-ip-config \
+            -n metallb-system \
+            --from-literal=addresses="$IP" \
+            --dry-run=client -o yaml | kubectl apply -f -
+          
+          echo "Configuration completed at $(date)"
+        resources:
+          requests:
+            memory: "64Mi"
+            cpu: "100m"
+          limits:
+            memory: "128Mi"
+            cpu: "200m"
       restartPolicy: Never
-  backoffLimit: 4
