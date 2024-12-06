@@ -5,7 +5,7 @@ metadata:
   namespace: metallb-system
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-10"  # Doit être créé en premier
+    "helm.sh/hook-weight": "-10"
 ---
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
@@ -16,7 +16,7 @@ metadata:
     "helm.sh/hook-weight": "-9"
 rules:
 - apiGroups: [""]
-  resources: ["secrets"]
+  resources: ["secrets", "serviceaccounts"]  # Ajout de serviceaccounts
   verbs: ["get"]
 - apiGroups: [""]
   resources: ["configmaps"]
