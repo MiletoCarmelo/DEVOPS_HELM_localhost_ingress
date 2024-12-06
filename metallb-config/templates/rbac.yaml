@@ -1,9 +1,8 @@
-# templates/rbac.yaml
 apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: metallb-init-config
-  namespace: {{ .Release.Namespace }}
+  namespace: metallb-system
   annotations:
     "helm.sh/hook": pre-install,pre-upgrade
     "helm.sh/hook-weight": "-10"  # Doit être créé en premier
@@ -33,38 +32,8 @@ metadata:
 subjects:
 - kind: ServiceAccount
   name: metallb-init-config
-  namespace: {{ .Release.Namespace }}
+  namespace: metallb-system
 roleRef:
   apiGroup: rbac.authorization.k8s.io
   kind: ClusterRole
   name: metallb-init-role
-
----
-# templates/job-init-pool.yaml
-apiVersion: batch/v1
-kind: Job
-metadata:
-  name: metallb-init-config-{{ .Release.Name }}
-  namespace: {{ .Release.Namespace }}
-  annotations:
-    "helm.sh/hook": pre-install,pre-upgrade
-    "helm.sh/hook-weight": "-5"  # S'exécute après la création du RBAC
-    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
-spec:
-  backoffLimit: 4
-  template:
-    metadata:
-      labels:
-        app: metallb-init-config
-    spec:
-      serviceAccountName: metallb-init-config
-      containers:
-      - name: init-config
-        image: bitnami/kubectl:latest
-        command:
-        - /bin/sh
-        - -xec
-        - |
-          echo "=== Starting init job at $(date) ==="
-          kubectl get serviceaccount metallb-init-config
-          kubectl auth can-i get
