@@ -11,3 +11,7 @@ l2Advertisements:
 
 webhook:
   enabled: true
+  serviceAccount:
+    create: true
+  tls:
+    generate: true
