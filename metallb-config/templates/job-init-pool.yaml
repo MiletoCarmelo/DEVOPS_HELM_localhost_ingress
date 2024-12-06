@@ -62,8 +62,15 @@ spec:
 
           echo "configmap created"
 
-          # Patch le manifeste IPAddressPool avec l'adresse récupérée
+          # Assurez-vous que le pool existe avant de patcher
+          while ! kubectl get ipaddresspool first-pool -n metallb-system; do
+            echo "Waiting for IPAddressPool to be created..."
+            sleep 5
+          done
+
+          # Patch le pool avec l'adresse récupérée
           kubectl patch ipaddresspool first-pool -n metallb-system --type merge -p '{"spec": {"addresses": ["'"$IP"'"]}}'
+
 
           echo "ipaddresspool patched for adressses argument"
           
