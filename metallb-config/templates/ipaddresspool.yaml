@@ -4,5 +4,6 @@ metadata:
   name: first-pool
   namespace: metallb-system
 spec:
-  addresses: []
+  addresses: 
+   - "127.0.0.1/32"  # Adresse locale # attention pas utilisable mais remplacée par le job
   autoAssign: true
