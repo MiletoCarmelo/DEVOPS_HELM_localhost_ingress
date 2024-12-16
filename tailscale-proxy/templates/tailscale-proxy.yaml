@@ -15,34 +15,33 @@ spec:
     spec:
       serviceAccountName: tailscale
       containers:
-      - name: tailscale
-        image: ghcr.io/tailscale/tailscale:latest
-        command: ["/bin/sh", "-c"]
-        args:
-        - |
-          tailscaled --state=mem:ts-secrets --tun=userspace-networking &
-          sleep 5
-          tailscale up --authkey="${TS_AUTHKEY}" --hostname="${TS_HOSTNAME}" --accept-routes --advertise-routes="${TS_ROUTES}"
-          tailscale serve --https=443 off
-          tailscale serve --bg https://localhost:4001 https://localhost:4002 https://localhost:5900 https://localhost:6080
-          sleep infinity
-        env:
-        - name: TS_HOSTNAME
-          valueFrom:
-            secretKeyRef:
-              name: ts-secrets
-              key: TS_HOSTNAME
-        - name: TS_AUTHKEY
-          valueFrom:
-            secretKeyRef:
-              name: ts-secrets
-              key: TS_AUTHKEY
-        - name: TS_ROUTES
-          valueFrom:
-            secretKeyRef:
-              name: ts-secrets
-              key: TS_ROUTES
-        securityContext:
-          capabilities:
-            add:
-            - NET_ADMIN
+        - name: tailscale
+          image: ghcr.io/tailscale/tailscale:latest
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              tailscaled --state=mem:ts-secrets --tun=userspace-networking &
+              sleep 5
+              tailscale up --authkey="${TS_AUTHKEY}" --hostname="${TS_HOSTNAME}" --accept-routes --advertise-routes="${TS_ROUTES}"
+              tailscale serve --bg --http 4001 --http 4002 --http 5900 --http 6080
+              sleep infinity
+          env:
+            - name: TS_HOSTNAME
+              valueFrom:
+                secretKeyRef:
+                  name: ts-secrets
+                  key: TS_HOSTNAME
+            - name: TS_AUTHKEY
+              valueFrom:
+                secretKeyRef:
+                  name: ts-secrets
+                  key: TS_AUTHKEY
+            - name: TS_ROUTES
+              valueFrom:
+                secretKeyRef:
+                  name: ts-secrets
+                  key: TS_ROUTES
+          securityContext:
+            capabilities:
+              add:
+                - NET_ADMIN
