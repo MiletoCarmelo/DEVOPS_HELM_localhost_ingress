@@ -15,33 +15,33 @@ spec:
     spec:
       serviceAccountName: tailscale
       containers:
-        - name: tailscale
-          image: ghcr.io/tailscale/tailscale:latest
-          command: ["/bin/sh", "-c"]
-          args:
-            - |
-              tailscaled --state=mem:ts-secrets --tun=userspace-networking &
-              sleep 5
-              tailscale up --authkey="${TS_AUTHKEY}" --hostname="${TS_HOSTNAME}" --accept-routes --advertise-routes="${TS_ROUTES}"
-              tailscale serve --bg 80
-              sleep infinity
-          env:
-            - name: TS_HOSTNAME
-              valueFrom:
-                secretKeyRef:
-                  name: ts-secrets
-                  key: TS_HOSTNAME
-            - name: TS_AUTHKEY
-              valueFrom:
-                secretKeyRef:
-                  name: ts-secrets
-                  key: TS_AUTHKEY
-            - name: TS_ROUTES
-              valueFrom:
-                secretKeyRef:
-                  name: ts-secrets
-                  key: TS_ROUTES
-          securityContext:
-            capabilities:
-              add:
-                - NET_ADMIN
+      - name: tailscale
+        image: ghcr.io/tailscale/tailscale:latest
+        command: ["/bin/sh", "-c"]
+        args:
+        - |
+          tailscaled --state=mem:ts-secrets --tun=userspace-networking &
+          sleep 5
+          tailscale up --authkey="${TS_AUTHKEY}" --hostname="${TS_HOSTNAME}" --accept-routes --advertise-routes="${TS_ROUTES}"
+          tailscale serve --bg 80 4001 4002 5900 6080  # Modification ici pour exposer tous les ports
+          sleep infinity
+        env:
+        - name: TS_HOSTNAME
+          valueFrom:
+            secretKeyRef:
+              name: ts-secrets
+              key: TS_HOSTNAME
+        - name: TS_AUTHKEY
+          valueFrom:
+            secretKeyRef:
+              name: ts-secrets
+              key: TS_AUTHKEY
+        - name: TS_ROUTES
+          valueFrom:
+            secretKeyRef:
+              name: ts-secrets
+              key: TS_ROUTES
+        securityContext:
+          capabilities:
+            add:
+            - NET_ADMIN
