@@ -23,10 +23,10 @@ spec:
               tailscaled --state=mem:ts-secrets --tun=userspace-networking &
               sleep 5
               tailscale up --authkey="${TS_AUTHKEY}" --hostname="${TS_HOSTNAME}" --accept-routes --advertise-routes="${TS_ROUTES}"
-              tailscale serve --bg http://localhost:4001
-              tailscale serve --bg http://localhost:4002
-              tailscale serve --bg http://localhost:5900
-              tailscale serve --bg http://localhost:6080
+              tailscale serve --bg tcp:4001 tcp://ibgateway.ib-gateway.svc.cluster.local:4001
+              tailscale serve --bg tcp:4002 tcp://ibgateway.ib-gateway.svc.cluster.local:4002
+              tailscale serve --bg tcp:5900 tcp://ibgateway.ib-gateway.svc.cluster.local:5900
+              tailscale serve --bg tcp:6080 tcp://ibgateway-novnc.ib-gateway.svc.cluster.local:6080
               sleep infinity
           env:
             - name: TS_HOSTNAME
