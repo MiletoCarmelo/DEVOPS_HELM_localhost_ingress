@@ -23,11 +23,10 @@ spec:
               tailscaled --state=mem:ts-secrets --tun=userspace-networking &
               sleep 5
               tailscale up --authkey="${TS_AUTHKEY}" --hostname="${TS_HOSTNAME}" --accept-routes --advertise-routes="${TS_ROUTES}"
-              tailscale serve --bg 80
-              tailscale serve --bg 4001
-              tailscale serve --bg 4002
-              tailscale serve --bg 6080
-              tailscale serve --bg 5090
+              tailscale serve --bg http://localhost:4001
+              tailscale serve --bg http://localhost:4002
+              tailscale serve --bg http://localhost:5900
+              tailscale serve --bg http://localhost:6080
               sleep infinity
           env:
             - name: TS_HOSTNAME
