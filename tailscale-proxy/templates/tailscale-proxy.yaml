@@ -23,7 +23,8 @@ spec:
           tailscaled --state=mem:ts-secrets --tun=userspace-networking &
           sleep 5
           tailscale up --authkey="${TS_AUTHKEY}" --hostname="${TS_HOSTNAME}" --accept-routes --advertise-routes="${TS_ROUTES}"
-          tailscale serve --bg 80 4001 4002 5900 6080  # Modification ici pour exposer tous les ports
+          tailscale serve --https=443 off
+          tailscale serve --bg https://localhost:4001 https://localhost:4002 https://localhost:5900 https://localhost:6080
           sleep infinity
         env:
         - name: TS_HOSTNAME
